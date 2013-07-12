@@ -47,7 +47,6 @@ ALTER TABLE civicrm_premiums_product
 ADD CONSTRAINT FK_civicrm_premiums_product_premiums_id FOREIGN KEY (premiums_id) REFERENCES civicrm_premiums(id) ,
 ADD CONSTRAINT FK_civicrm_premiums_product_product_id FOREIGN KEY (product_id) REFERENCES civicrm_product(id);
 
--- Table 'chorusad_civic3x.civicrm_task_status' doesn't exist (make sure my upgrade didn't incorrectly delete this)
 ALTER TABLE civicrm_task_status
 ADD CONSTRAINT FK_civicrm_task_status_task_id FOREIGN KEY (task_id) REFERENCES civicrm_task(id);
 
