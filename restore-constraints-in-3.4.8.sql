@@ -28,7 +28,7 @@ FROM `civicrm_saved_search` css
 LEFT JOIN `civicrm_mapping` cm
 ON css.`mapping_id` = cm.`id`
 WHERE css.`mapping_id` IS NOT NULL
-AND cm.`id` IS NULL
+AND cm.`id` IS NULL;
 
 ALTER TABLE civicrm_saved_search
 ADD CONSTRAINT FK_civicrm_saved_search_mapping_id FOREIGN KEY (mapping_id) REFERENCES civicrm_mapping(id);
