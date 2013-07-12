@@ -1,0 +1,11 @@
+--- sites/all/modules/civicrm/CRM/Upgrade/Page/Upgrade.php	2013-06-25 14:19:18.104220807 -0400
++++ sites/all/modules/civicrm/CRM/Upgrade/Page/Upgrade.php	2013-06-25 14:18:39.680219895 -0400
+@@ -173,7 +173,7 @@
+             self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
+ 
+             // check for changed message templates
+-            self::checkMessageTemplate( &$template, &$preUpgradeMessage, $latestVer, $currentVer );
++            self::checkMessageTemplate( $template, $preUpgradeMessage, $latestVer, $currentVer );
+ 
+             //turning some tables to monolingual during 3.4.beta3, CRM-7869
+             if ( $upgrade->multilingual &&
