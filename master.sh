@@ -53,7 +53,6 @@ DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000
 	AND (
 		TABLE_NAME LIKE  'civicrm_export_temp%'
 		OR TABLE_NAME LIKE  'civicrm_import_job%'
-		OR TABLE_NAME LIKE  'civicrm_task%'
 		OR TABLE_NAME LIKE  'civicrm_export_temp%'
 		OR TABLE_NAME = 'x_AssociationOf'
 	)" | sed 1d)
