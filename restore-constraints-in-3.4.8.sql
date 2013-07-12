@@ -107,7 +107,10 @@ ADD CONSTRAINT FK_civicrm_custom_field_custom_group_id FOREIGN KEY (custom_group
 
 ALTER TABLE civicrm_dashboard
 ADD CONSTRAINT FK_civicrm_dashboard_domain_id FOREIGN KEY (domain_id) REFERENCES civicrm_domain(id);
--- FK constraint fails
+
+-- Resolve FK constraint failure by deleting cruft
+DELETE FROM `civicrm_email` WHERE `contact_id` IS NULL;
+
 ALTER TABLE civicrm_email
 ADD CONSTRAINT FK_civicrm_email_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
 
