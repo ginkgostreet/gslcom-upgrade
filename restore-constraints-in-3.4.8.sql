@@ -137,7 +137,14 @@ ADD CONSTRAINT FK_civicrm_mapping_field_relationship_type_id FOREIGN KEY (relati
 ALTER TABLE civicrm_menu
 ADD CONSTRAINT FK_civicrm_menu_domain_id FOREIGN KEY (domain_id) REFERENCES civicrm_domain(id) ,
 ADD CONSTRAINT FK_civicrm_menu_component_id FOREIGN KEY (component_id) REFERENCES civicrm_component(id);
--- FK constraint fails
+
+-- clean up civicrm_note to address FK issue
+DELETE `civicrm_note`
+FROM `civicrm_note`
+LEFT JOIN `civicrm_contact`
+ON `civicrm_note`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_note
 ADD CONSTRAINT FK_civicrm_note_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL;
 -- FK constraint fails (at least the first one)
