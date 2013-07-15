@@ -125,7 +125,15 @@ ADD CONSTRAINT FK_civicrm_entity_financial_trxn_financial_trxn_id FOREIGN KEY (f
 
 ALTER TABLE civicrm_im
 ADD CONSTRAINT FK_civicrm_im_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
--- FK constraint fails
+
+-- Resolve FK constraint failure by deleting cruft
+DELETE `civicrm_log`
+FROM `civicrm_log`
+LEFT JOIN `civicrm_contact`
+ON `civicrm_log`.`modified_id` = `civicrm_contact`.`id`
+WHERE `civicrm_log`.`modified_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_log
 ADD CONSTRAINT FK_civicrm_log_modified_id FOREIGN KEY (modified_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
 
@@ -147,15 +155,39 @@ WHERE `civicrm_contact`.`id` IS NULL;
 
 ALTER TABLE civicrm_note
 ADD CONSTRAINT FK_civicrm_note_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_option_value to address FK issue
+DELETE `civicrm_option_value`
+FROM  `civicrm_option_value`
+LEFT JOIN  `civicrm_option_group`
+ON `civicrm_option_value`.`option_group_id` = `civicrm_option_group`.`id`
+WHERE `civicrm_option_value`.`option_group_id` IS NOT NULL
+AND `civicrm_option_group`.`id` IS NULL;
+
 ALTER TABLE civicrm_option_value
 ADD CONSTRAINT FK_civicrm_option_value_option_group_id FOREIGN KEY (option_group_id) REFERENCES civicrm_option_group(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_option_value_component_id FOREIGN KEY (component_id) REFERENCES civicrm_component(id) ,
 ADD CONSTRAINT FK_civicrm_option_value_domain_id FOREIGN KEY (domain_id) REFERENCES civicrm_domain(id);
--- FK constraint fails
+
+-- clean up civicrm_phone to address FK issue
+DELETE `civicrm_phone`
+FROM  `civicrm_phone`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_phone`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_phone`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_phone
 ADD CONSTRAINT FK_civicrm_phone_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
--- FK constraint fails
+
+-- clean up civicrm_preferences to address FK issue
+DELETE `civicrm_preferences`
+FROM  `civicrm_preferences`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_preferences`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_preferences`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_preferences
 ADD CONSTRAINT FK_civicrm_preferences_domain_id FOREIGN KEY (domain_id) REFERENCES civicrm_domain(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_preferences_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
@@ -176,7 +208,15 @@ ADD CONSTRAINT FK_civicrm_timezone_country_id FOREIGN KEY (country_id) REFERENCE
 
 ALTER TABLE civicrm_openid
 ADD CONSTRAINT FK_civicrm_openid_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
--- FK constraint fails
+
+-- clean up civicrm_website to address FK issue
+DELETE `civicrm_website`
+FROM  `civicrm_website`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_website`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_website`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_website
 ADD CONSTRAINT FK_civicrm_website_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
 
@@ -190,7 +230,23 @@ ADD CONSTRAINT FK_civicrm_dashboard_contact_contact_id FOREIGN KEY (contact_id) 
 
 ALTER TABLE civicrm_group
 ADD CONSTRAINT FK_civicrm_group_saved_search_id FOREIGN KEY (saved_search_id) REFERENCES civicrm_saved_search(id);
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_subscription_history to address FK issue
+DELETE `civicrm_subscription_history`
+FROM  `civicrm_subscription_history`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_subscription_history`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_subscription_history`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
+-- clean up civicrm_subscription_history to address FK issue
+DELETE `civicrm_subscription_history`
+FROM  `civicrm_subscription_history`
+LEFT JOIN  `civicrm_group`
+ON `civicrm_subscription_history`.`group_id` = `civicrm_group`.`id`
+WHERE `civicrm_subscription_history`.`group_id` IS NOT NULL
+AND `civicrm_group`.`id` IS NULL;
+
 ALTER TABLE civicrm_subscription_history
 ADD CONSTRAINT FK_civicrm_subscription_history_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_subscription_history_group_id FOREIGN KEY (group_id) REFERENCES civicrm_group(id) ON DELETE CASCADE;
@@ -198,7 +254,15 @@ ADD CONSTRAINT FK_civicrm_subscription_history_group_id FOREIGN KEY (group_id) R
 ALTER TABLE civicrm_group_contact_cache
 ADD CONSTRAINT FK_civicrm_group_contact_cache_group_id FOREIGN KEY (group_id) REFERENCES civicrm_group(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_group_contact_cache_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_group_nesting to address FK issue
+DELETE `civicrm_group_nesting`
+FROM  `civicrm_group_nesting`
+LEFT JOIN  `civicrm_group`
+ON `civicrm_group_nesting`.`child_group_id` = `civicrm_group`.`id`
+WHERE `civicrm_group_nesting`.`child_group_id` IS NOT NULL
+AND `civicrm_group`.`id` IS NULL;
+
 ALTER TABLE civicrm_group_nesting
 ADD CONSTRAINT FK_civicrm_group_nesting_child_group_id FOREIGN KEY (child_group_id) REFERENCES civicrm_group(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_group_nesting_parent_group_id FOREIGN KEY (parent_group_id) REFERENCES civicrm_group(id) ON DELETE CASCADE;
@@ -206,7 +270,23 @@ ADD CONSTRAINT FK_civicrm_group_nesting_parent_group_id FOREIGN KEY (parent_grou
 ALTER TABLE civicrm_group_organization
 ADD CONSTRAINT FK_civicrm_group_organization_group_id FOREIGN KEY (group_id) REFERENCES civicrm_group(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_group_organization_organization_id FOREIGN KEY (organization_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_relationship to address FK issue
+DELETE `civicrm_relationship`
+FROM  `civicrm_relationship`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_relationship`.`contact_id_a` = `civicrm_contact`.`id`
+WHERE `civicrm_relationship`.`contact_id_a` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
+-- clean up civicrm_relationship to address FK issue
+DELETE `civicrm_relationship`
+FROM  `civicrm_relationship`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_relationship`.`contact_id_b` = `civicrm_contact`.`id`
+WHERE `civicrm_relationship`.`contact_id_b` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_relationship
 ADD CONSTRAINT FK_civicrm_relationship_contact_id_a FOREIGN KEY (contact_id_a) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_relationship_contact_id_b FOREIGN KEY (contact_id_b) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
@@ -225,14 +305,30 @@ ADD CONSTRAINT FK_civicrm_contribution_page_contribution_type_id FOREIGN KEY (co
 ADD CONSTRAINT FK_civicrm_contribution_page_payment_processor_id FOREIGN KEY (payment_processor_id) REFERENCES civicrm_payment_processor(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_contribution_page_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_contribution_page_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE SET NULL;
--- FK constraint fails
+
+-- clean up civicrm_contribution_widget to address FK issue
+DELETE `civicrm_contribution_widget`
+FROM  `civicrm_contribution_widget`
+LEFT JOIN  `civicrm_contribution_page`
+ON `civicrm_contribution_widget`.`contribution_page_id` = `civicrm_contribution_page`.`id`
+WHERE `civicrm_contribution_widget`.`contribution_page_id` IS NOT NULL
+AND `civicrm_contribution_page`.`id` IS NULL;
+
 ALTER TABLE civicrm_contribution_widget
 ADD CONSTRAINT FK_civicrm_contribution_widget_contribution_page_id FOREIGN KEY (contribution_page_id) REFERENCES civicrm_contribution_page(id) ON DELETE CASCADE;
 
 ALTER TABLE civicrm_pcp
 ADD CONSTRAINT FK_civicrm_pcp_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_pcp_contribution_page_id FOREIGN KEY (contribution_page_id) REFERENCES civicrm_contribution_page(id);
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_activity to address FK issue
+DELETE `civicrm_activity`
+FROM  `civicrm_activity`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_activity`.`source_contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_activity`.`source_contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_activity
 ADD CONSTRAINT FK_civicrm_activity_source_contact_id FOREIGN KEY (source_contact_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_activity_phone_id FOREIGN KEY (phone_id) REFERENCES civicrm_phone(id) ON DELETE SET NULL,
@@ -240,11 +336,43 @@ ADD CONSTRAINT FK_civicrm_activity_parent_id FOREIGN KEY (parent_id) REFERENCES 
 ADD CONSTRAINT FK_civicrm_activity_relationship_id FOREIGN KEY (relationship_id) REFERENCES civicrm_relationship(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_activity_original_id FOREIGN KEY (original_id) REFERENCES civicrm_activity(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_activity_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE SET NULL;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_activity_assignment to address FK issue
+DELETE `civicrm_activity_assignment`
+FROM  `civicrm_activity_assignment`
+LEFT JOIN  `civicrm_activity`
+ON `civicrm_activity_assignment`.`activity_id` = `civicrm_activity`.`id`
+WHERE `civicrm_activity_assignment`.`activity_id` IS NOT NULL
+AND `civicrm_activity`.`id` IS NULL;
+
+-- clean up civicrm_activity_assignment to address FK issue
+DELETE `civicrm_activity_assignment`
+FROM  `civicrm_activity_assignment`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_activity_assignment`.`assignee_contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_activity_assignment`.`assignee_contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_activity_assignment
 ADD CONSTRAINT FK_civicrm_activity_assignment_activity_id FOREIGN KEY (activity_id) REFERENCES civicrm_activity(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_activity_assignment_assignee_contact_id FOREIGN KEY (assignee_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_activity_target to address FK issue
+DELETE `civicrm_activity_target`
+FROM  `civicrm_activity_target`
+LEFT JOIN  `civicrm_activity`
+ON `civicrm_activity_target`.`activity_id` = `civicrm_activity`.`id`
+WHERE `civicrm_activity_target`.`activity_id` IS NOT NULL
+AND `civicrm_activity`.`id` IS NULL;
+
+-- clean up civicrm_activity_target to address FK issue
+DELETE `civicrm_activity_target`
+FROM  `civicrm_activity_target`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_activity_target`.`target_contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_activity_target`.`target_contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_activity_target
 ADD CONSTRAINT FK_civicrm_activity_target_activity_id FOREIGN KEY (activity_id) REFERENCES civicrm_activity(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_activity_target_target_contact_id FOREIGN KEY (target_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE;
@@ -252,7 +380,15 @@ ADD CONSTRAINT FK_civicrm_activity_target_target_contact_id FOREIGN KEY (target_
 ALTER TABLE civicrm_case_activity
 ADD CONSTRAINT FK_civicrm_case_activity_case_id FOREIGN KEY (case_id) REFERENCES civicrm_case(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_case_activity_activity_id FOREIGN KEY (activity_id) REFERENCES civicrm_activity(id) ON DELETE CASCADE;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_pledge to address FK issue
+DELETE `civicrm_pledge`
+FROM  `civicrm_pledge`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_pledge`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_pledge`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_pledge
 ADD CONSTRAINT FK_civicrm_pledge_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_pledge_contribution_type_id FOREIGN KEY (contribution_type_id) REFERENCES civicrm_contribution_type(id) ON DELETE SET NULL,
@@ -361,7 +497,16 @@ ADD CONSTRAINT FK_civicrm_membership_type_domain_id FOREIGN KEY (domain_id) REFE
 ADD CONSTRAINT FK_civicrm_membership_type_member_of_contact_id FOREIGN KEY (member_of_contact_id) REFERENCES civicrm_contact(id) ON DELETE RESTRICT,
 ADD CONSTRAINT FK_civicrm_membership_type_contribution_type_id FOREIGN KEY (contribution_type_id) REFERENCES civicrm_contribution_type(id) ,
 ADD CONSTRAINT FK_civicrm_membership_type_renewal_msg_id FOREIGN KEY (renewal_msg_id) REFERENCES civicrm_msg_template(id);
--- FK constraint fails (at least the FK_civicrm_membership_owner_membership_id key, possibly the ones after that)
+
+-- clean up civicrm_membership to address FK issue; null owner_membership_id for
+-- records which contain invalid values
+UPDATE `civicrm_membership` m
+LEFT JOIN  `civicrm_membership` o
+ON m.`owner_membership_id` = o.`id`
+SET m.`owner_membership_id` = NULL
+WHERE m.`owner_membership_id` IS NOT NULL
+AND o.`id` IS NULL;
+
 ALTER TABLE civicrm_membership
 ADD CONSTRAINT FK_civicrm_membership_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_membership_membership_type_id FOREIGN KEY (membership_type_id) REFERENCES civicrm_membership_type(id) ON DELETE CASCADE,
@@ -373,7 +518,25 @@ ADD CONSTRAINT FK_civicrm_membership_campaign_id FOREIGN KEY (campaign_id) REFER
 ALTER TABLE civicrm_membership_block
 ADD CONSTRAINT FK_civicrm_membership_block_entity_id FOREIGN KEY (entity_id) REFERENCES civicrm_contribution_page(id) ,
 ADD CONSTRAINT FK_civicrm_membership_block_membership_type_default FOREIGN KEY (membership_type_default) REFERENCES civicrm_membership_type(id);
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_membership_log to address FK issue; delete log records where
+-- membership does not exist
+DELETE `civicrm_membership_log`
+FROM  `civicrm_membership_log`
+LEFT JOIN  `civicrm_membership`
+ON `civicrm_membership_log`.`membership_id` = `civicrm_membership`.`id`
+WHERE `civicrm_membership_log`.`membership_id` IS NOT NULL
+AND `civicrm_membership`.`id` IS NULL;
+
+-- clean up civicrm_membership_log to address FK issue; delete log records where
+-- contact does not exist
+DELETE `civicrm_membership_log`
+FROM  `civicrm_membership_log`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_membership_log`.`modified_id` = `civicrm_contact`.`id`
+WHERE `civicrm_membership_log`.`modified_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_membership_log
 ADD CONSTRAINT FK_civicrm_membership_log_membership_id FOREIGN KEY (membership_id) REFERENCES civicrm_membership(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_membership_log_status_id FOREIGN KEY (status_id) REFERENCES civicrm_membership_status(id) ON DELETE CASCADE,
@@ -387,7 +550,24 @@ ADD CONSTRAINT FK_civicrm_price_field_value_membership_type_id FOREIGN KEY (memb
 ALTER TABLE civicrm_line_item
 ADD CONSTRAINT FK_civicrm_line_item_price_field_id FOREIGN KEY (price_field_id) REFERENCES civicrm_price_field(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_line_item_price_field_value_id FOREIGN KEY (price_field_value_id) REFERENCES civicrm_price_field_value(id) ON DELETE SET NULL;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_address to address FK issue; delete addresses where contact
+-- is missing
+DELETE `civicrm_address`
+FROM  `civicrm_address`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_address`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_address`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
+-- clean up civicrm_address to address FK issue
+UPDATE  `civicrm_address` a
+LEFT JOIN  `civicrm_address` m
+ON a.`master_id` = m.`id`
+SET a.`master_id` = NULL
+WHERE a.`master_id` IS NOT NULL
+AND m.`id` IS NULL;
+
 ALTER TABLE civicrm_address
 ADD CONSTRAINT FK_civicrm_address_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_address_county_id FOREIGN KEY (county_id) REFERENCES civicrm_county(id) ON DELETE SET NULL,
@@ -404,13 +584,30 @@ ADD CONSTRAINT FK_civicrm_loc_block_address_2_id FOREIGN KEY (address_2_id) REFE
 ADD CONSTRAINT FK_civicrm_loc_block_email_2_id FOREIGN KEY (email_2_id) REFERENCES civicrm_email(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_loc_block_phone_2_id FOREIGN KEY (phone_2_id) REFERENCES civicrm_phone(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_loc_block_im_2_id FOREIGN KEY (im_2_id) REFERENCES civicrm_im(id) ON DELETE SET NULL;
--- FK constraint fails (at least the 2nd one, possibly the remaining ones too)
+
+-- clean up civicrm_group_contact to address FK issue
+DELETE `civicrm_group_contact`
+FROM  `civicrm_group_contact`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_group_contact`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_group_contact`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_group_contact
 ADD CONSTRAINT FK_civicrm_group_contact_group_id FOREIGN KEY (group_id) REFERENCES civicrm_group(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_group_contact_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_group_contact_location_id FOREIGN KEY (location_id) REFERENCES civicrm_loc_block(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_group_contact_email_id FOREIGN KEY (email_id) REFERENCES civicrm_email(id);
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_contribution to address FK issue; delete contributions
+-- associated with non-existent contacts
+DELETE `civicrm_contribution`
+FROM  `civicrm_contribution`
+LEFT JOIN  `civicrm_contact`
+ON `civicrm_contribution`.`contact_id` = `civicrm_contact`.`id`
+WHERE `civicrm_contribution`.`contact_id` IS NOT NULL
+AND `civicrm_contact`.`id` IS NULL;
+
 ALTER TABLE civicrm_contribution
 ADD CONSTRAINT FK_civicrm_contribution_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_contribution_contribution_type_id FOREIGN KEY (contribution_type_id) REFERENCES civicrm_contribution_type(id) ON DELETE SET NULL,
@@ -419,15 +616,40 @@ ADD CONSTRAINT FK_civicrm_contribution_contribution_recur_id FOREIGN KEY (contri
 ADD CONSTRAINT FK_civicrm_contribution_honor_contact_id FOREIGN KEY (honor_contact_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_contribution_address_id FOREIGN KEY (address_id) REFERENCES civicrm_address(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_contribution_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE SET NULL;
--- FK constraint fails
+
+-- clean up civicrm_contribution_product to address FK issue
+DELETE `civicrm_contribution_product`
+FROM  `civicrm_contribution_product`
+LEFT JOIN  `civicrm_contribution`
+ON `civicrm_contribution_product`.`contribution_id` = `civicrm_contribution`.`id`
+WHERE `civicrm_contribution_product`.`contribution_id` IS NOT NULL
+AND `civicrm_contribution`.`id` IS NULL;
+
 ALTER TABLE civicrm_contribution_product
 ADD CONSTRAINT FK_civicrm_contribution_product_contribution_id FOREIGN KEY (contribution_id) REFERENCES civicrm_contribution(id) ON DELETE CASCADE;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_contribution_soft to address FK issue; delete soft contribs
+-- where hard contribs don't exist
+DELETE `civicrm_contribution_soft`.*
+FROM  `civicrm_contribution_soft`
+LEFT JOIN  `civicrm_contribution`
+ON `civicrm_contribution_soft`.`contribution_id` = `civicrm_contribution`.`id`
+WHERE `civicrm_contribution_soft`.`contribution_id` IS NOT NULL
+AND `civicrm_contribution`.`id` IS NULL;
+
 ALTER TABLE civicrm_contribution_soft
 ADD CONSTRAINT FK_civicrm_contribution_soft_contribution_id FOREIGN KEY (contribution_id) REFERENCES civicrm_contribution(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_contribution_soft_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_contribution_soft_pcp_id FOREIGN KEY (pcp_id) REFERENCES civicrm_pcp(id) ON DELETE SET NULL;
--- FK constraint fails (just the second one)
+
+-- clean up civicrm_membership_payment to address FK issue
+DELETE `civicrm_membership_payment`
+FROM  `civicrm_membership_payment`
+LEFT JOIN  `civicrm_contribution`
+ON `civicrm_membership_payment`.`contribution_id` = `civicrm_contribution`.`id`
+WHERE `civicrm_membership_payment`.`contribution_id` IS NOT NULL
+AND `civicrm_contribution`.`id` IS NULL;
+
 ALTER TABLE civicrm_membership_payment
 ADD CONSTRAINT FK_civicrm_membership_payment_membership_id FOREIGN KEY (membership_id) REFERENCES civicrm_membership(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_membership_payment_contribution_id FOREIGN KEY (contribution_id) REFERENCES civicrm_contribution(id) ON DELETE CASCADE;
@@ -437,7 +659,15 @@ ADD CONSTRAINT FK_civicrm_event_payment_processor_id FOREIGN KEY (payment_proces
 ADD CONSTRAINT FK_civicrm_event_loc_block_id FOREIGN KEY (loc_block_id) REFERENCES civicrm_loc_block(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_event_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_event_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE SET NULL;
--- FK constraint fails (at least discount_id, possibly followers)
+
+-- clean up civicrm_participant to address FK issue
+DELETE `civicrm_participant`
+FROM  `civicrm_participant`
+LEFT JOIN  `civicrm_discount`
+ON `civicrm_participant`.`discount_id` = `civicrm_discount`.`id`
+WHERE `civicrm_participant`.`discount_id` IS NOT NULL
+AND `civicrm_discount`.`id` IS NULL;
+
 ALTER TABLE civicrm_participant
 ADD CONSTRAINT FK_civicrm_participant_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_participant_event_id FOREIGN KEY (event_id) REFERENCES civicrm_event(id) ON DELETE CASCADE,
@@ -445,7 +675,23 @@ ADD CONSTRAINT FK_civicrm_participant_status_id FOREIGN KEY (status_id) REFERENC
 ADD CONSTRAINT FK_civicrm_participant_registered_by_id FOREIGN KEY (registered_by_id) REFERENCES civicrm_participant(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_participant_discount_id FOREIGN KEY (discount_id) REFERENCES civicrm_discount(id) ON DELETE SET NULL,
 ADD CONSTRAINT FK_civicrm_participant_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE SET NULL;
--- FK constraint fails (at least the first one)
+
+-- clean up civicrm_participant_payment to address FK issue
+DELETE `civicrm_participant_payment`.*
+FROM  `civicrm_participant_payment`
+LEFT JOIN  `civicrm_participant`
+ON `civicrm_participant_payment`.`participant_id` = `civicrm_participant`.`id`
+WHERE `civicrm_participant_payment`.`participant_id` IS NOT NULL
+AND `civicrm_participant`.`id` IS NULL;
+
+-- clean up civicrm_participant_payment to address FK issue
+DELETE `civicrm_participant_payment`.*
+FROM  `civicrm_participant_payment`
+LEFT JOIN  `civicrm_contribution`
+ON `civicrm_participant_payment`.`contribution_id` = `civicrm_contribution`.`id`
+WHERE `civicrm_participant_payment`.`contribution_id` IS NOT NULL
+AND `civicrm_contribution`.`id` IS NULL;
+
 ALTER TABLE civicrm_participant_payment
 ADD CONSTRAINT FK_civicrm_participant_payment_participant_id FOREIGN KEY (participant_id) REFERENCES civicrm_participant(id) ON DELETE CASCADE,
 ADD CONSTRAINT FK_civicrm_participant_payment_contribution_id FOREIGN KEY (contribution_id) REFERENCES civicrm_contribution(id) ON DELETE CASCADE;
