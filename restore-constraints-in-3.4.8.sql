@@ -147,10 +147,10 @@ ADD CONSTRAINT FK_civicrm_menu_domain_id FOREIGN KEY (domain_id) REFERENCES civi
 ADD CONSTRAINT FK_civicrm_menu_component_id FOREIGN KEY (component_id) REFERENCES civicrm_component(id);
 
 -- clean up civicrm_note to address FK issue
-DELETE `civicrm_note`
-FROM `civicrm_note`
+UPDATE `civicrm_note`
 LEFT JOIN `civicrm_contact`
 ON `civicrm_note`.`contact_id` = `civicrm_contact`.`id`
+SET `civicrm_note`.`contact_id` = NULL
 WHERE `civicrm_contact`.`id` IS NULL;
 
 ALTER TABLE civicrm_note
@@ -322,10 +322,10 @@ ADD CONSTRAINT FK_civicrm_pcp_contact_id FOREIGN KEY (contact_id) REFERENCES civ
 ADD CONSTRAINT FK_civicrm_pcp_contribution_page_id FOREIGN KEY (contribution_page_id) REFERENCES civicrm_contribution_page(id);
 
 -- clean up civicrm_activity to address FK issue
-DELETE `civicrm_activity`
-FROM  `civicrm_activity`
+UPDATE `civicrm_activity`
 LEFT JOIN  `civicrm_contact`
 ON `civicrm_activity`.`source_contact_id` = `civicrm_contact`.`id`
+SET `civicrm_activity`.`source_contact_id` = NULL
 WHERE `civicrm_activity`.`source_contact_id` IS NOT NULL
 AND `civicrm_contact`.`id` IS NULL;
 
@@ -530,10 +530,10 @@ AND `civicrm_membership`.`id` IS NULL;
 
 -- clean up civicrm_membership_log to address FK issue; delete log records where
 -- contact does not exist
-DELETE `civicrm_membership_log`
-FROM  `civicrm_membership_log`
+UPDATE `civicrm_membership_log`
 LEFT JOIN  `civicrm_contact`
 ON `civicrm_membership_log`.`modified_id` = `civicrm_contact`.`id`
+SET `civicrm_membership_log`.`modified_id` = NULL
 WHERE `civicrm_membership_log`.`modified_id` IS NOT NULL
 AND `civicrm_contact`.`id` IS NULL;
 
@@ -661,10 +661,10 @@ ADD CONSTRAINT FK_civicrm_event_created_id FOREIGN KEY (created_id) REFERENCES c
 ADD CONSTRAINT FK_civicrm_event_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE SET NULL;
 
 -- clean up civicrm_participant to address FK issue
-DELETE `civicrm_participant`
-FROM  `civicrm_participant`
+UPDATE `civicrm_participant`
 LEFT JOIN  `civicrm_discount`
 ON `civicrm_participant`.`discount_id` = `civicrm_discount`.`id`
+SET `civicrm_participant`.`discount_id` = NULL
 WHERE `civicrm_participant`.`discount_id` IS NOT NULL
 AND `civicrm_discount`.`id` IS NULL;
 
