@@ -21,5 +21,8 @@ tar -C "${WEBROOT}"/sites/all/modules/ -xzf "${ABS_CALLPATH}/${MY_TARGZ}"
 echo "Patching CiviCRM 3.4.8 for PHP 5.4..."
 patch -p0 < "${ABS_CALLPATH}/civicrm-3.4.8-call-timepass-by-ref.patch"
 
+echo "Restoring broken foreign key constraints..."
+mysql chorusad_civic3x < "${ABS_CALLPATH}/restore-constraints-in-3.4.8.sql"
+
 echo "Running the database upgrade. Please be patient; this could take a while..."
 drush civicrm-upgrade-db # or go to /?q=civicrm/upgrade&reset=1
