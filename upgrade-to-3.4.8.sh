@@ -26,3 +26,8 @@ mysql chorusad_civic3x < "${ABS_CALLPATH}/restore-constraints-in-3.4.8.sql"
 
 echo "Running the database upgrade. Please be patient; this could take a while..."
 drush civicrm-upgrade-db # or go to /?q=civicrm/upgrade&reset=1
+
+# this is necessary because the database upgrade for 4.1.5 seems to need to be
+# run from a web browser rather than drush
+echo "Ensuring CiviCRM cache is writable by the web server..."
+chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
