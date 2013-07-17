@@ -22,10 +22,13 @@ echo "Replacing CiviCRM core files..."
 rm -rf "${WEBROOT}"/sites/all/modules/civicrm
 tar -C "${WEBROOT}"/sites/all/modules/ -xzf "${ABS_CALLPATH}/${MY_TARGZ}"
 
-#echo "Creating civicrm_setting table..."
-#mysql chorusad_civic3x < "${ABS_CALLPATH}/civicrm_setting.sql"
-
-#echo "Running the database upgrade. Please be patient; this could take a while..."
-#drush civicrm-upgrade-db # or go to /?q=civicrm/upgrade&reset=1
-
-exit 1
+echo -e "\E[31mUpgrading the DB from the command line does not appear to work. Point your browser to /?q=civicrm/upgrade&reset=1.\033[0m"
+read -p "Did the browser-based upgrade to 4.1.5 succeed? (A negative answer will abort this script): y/n " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  echo -e "\E[31mWhile you're at your web browser, delete these users: /civicrm/contact/view?reset=1&cid=30119 and /civicrm/contact/view?reset=1&cid=30120\033[0m"
+  read -sn 1 -p "Once you're done, press any key to continue..."; echo
+else
+  echo "Installation canceled."
+  exit 1;
+fi
