@@ -1,3 +1,5 @@
+ALTER TABLE `civicrm_membership_type`
+ADD CONSTRAINT `FK_civicrm_membership_autorenewal_msg_id` FOREIGN KEY (`autorenewal_msg_id`) REFERENCES `civicrm_msg_template` (`id`) ON DELETE SET NULL;
 
 ALTER TABLE civicrm_financial_trxn
 ADD CONSTRAINT FK_civicrm_financial_trxn_from_account_id FOREIGN KEY (from_account_id) REFERENCES civicrm_financial_account(id) ,
