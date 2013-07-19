@@ -107,6 +107,9 @@ source "${ABS_CALLPATH}/upgrade-to-3.4.8.sh"
 echo "Beginning upgrade to 4.1.5..."
 source "${ABS_CALLPATH}/upgrade-to-4.1.5.sh"
 
+echo "Beginning upgrade to 4.3.5..."
+source "${ABS_CALLPATH}/upgrade-to-4.3.5.sh"
+
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
 	if [[ "${MOD}" != "civicrm" ]]; then
