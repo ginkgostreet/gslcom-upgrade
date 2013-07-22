@@ -1,0 +1,2 @@
+# m     h     dom     mon     dow     command
+*/5     *     *       *       *       /usr/local/bin/php /home/chorusad/www/sites/all/modules/civicrm/bin/cli.php -u CRONRunner -p thKEvx3m4CbNzui -e Job -a execute

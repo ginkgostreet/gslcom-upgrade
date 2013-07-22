@@ -23,3 +23,10 @@ read -sn 1 -p "Once you're done, press any key to continue..."; echo
 
 echo "Updating message templates..."
 mysql chorusad_civic3x < "${ABS_CALLPATH}/update-message-templates.sql"
+
+echo "Configuring scheduled jobs..."
+mysql chorusad_civic3x < "${ABS_CALLPATH}/configure-scheduled-jobs.sql"
+
+echo "Replacing cron configuration..."
+crontab -l > "${ABS_CALLPATH}/cron.old"
+crontab "${ABS_CALLPATH}/cron.new"
