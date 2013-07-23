@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Accepts flag --no-dev. This script is run in dev mode by default. In dev
+# mode, CiviCRM is configured to send no mail at all.
+
 ##########
 # config #
 ##########
@@ -10,6 +13,13 @@ WEB_GROUP="www-data"
 # /config #
 ###########
 
+FLAG_DEV=true
+for arg in $*; do
+    if [[ "$arg" == "--no-dev" ]]; then
+        FLAG_DEV=false
+    fi
+done
+
 if [ `whoami` != "root" ]; then
     echo >&2 "This script must be run as root. Aborting."
     exit 1
@@ -18,6 +28,12 @@ fi
 CALLPATH=`dirname "$0"`
 ABS_CALLPATH="`( cd \"${CALLPATH}\" && pwd -P)`"
 WEBROOT="${ABS_CALLPATH}/${WEBDIR}"
+
+# log CiviCRM-generated email instead of sending it
+if ${FLAG_DEV}; then
+    sed -i "/CIVICRM_MAIL_LOG/c\define('CIVICRM_MAIL_LOG', 1);" \
+        "${WEBROOT}"/sites/default/civicrm.settings.php
+fi
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
