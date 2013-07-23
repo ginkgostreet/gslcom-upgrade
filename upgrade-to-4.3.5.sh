@@ -12,6 +12,9 @@ set -e
 
 cd "${WEBROOT}"
 
+echo "Clearing caches..."
+drush cc all
+
 # drush civicrm-upgrade has not been reliable for us, so we unpack the tar ourselves and run
 # drush civicrm-upgrade-db, which *HAS* been reliable
 echo "Replacing CiviCRM core files..."
