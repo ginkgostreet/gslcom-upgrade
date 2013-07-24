@@ -7,7 +7,8 @@
 # config #
 ##########
 CIVI_DB="chorusad_civic3x"
-WEBDIR="../../htdocs"
+#WEBDIR="../../htdocs"
+WEBROOT="/var/www/chorusamerica.localhost/htdocs"
 WEB_USER="www-data"
 WEB_GROUP="www-data"
 ###########
@@ -28,7 +29,7 @@ fi
 
 CALLPATH=`dirname "$0"`
 ABS_CALLPATH="`( cd \"${CALLPATH}\" && pwd -P)`"
-WEBROOT="${ABS_CALLPATH}/${WEBDIR}"
+#WEBROOT="${ABS_CALLPATH}/${WEBDIR}"
 
 # log CiviCRM-generated email instead of sending it
 if ${FLAG_DEV}; then
