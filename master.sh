@@ -116,7 +116,7 @@ chmod a+w "${WEBROOT}"/sites/default/files/
 chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
 
 echo "Making CiviCRM settings file writable..."
-chmod a+w sites/default/civicrm.settings.php
+chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
 
 echo "Beginning upgrade to 3.4.8..."
 source "${ABS_CALLPATH}/upgrade-to-3.4.8.sh"
@@ -138,9 +138,9 @@ for MOD in "${CIVI_MODULES}"; do
 done
 
 echo "Adjusting file ownership and permissions..."
-chmod a-w sites/default/civicrm.settings.php
+chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
 chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
-chmod -R o-w sites/default/files/civicrm/
+chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 
 echo "Taking site out of maintenance mode..."
 drush vset -y maintenance_mode 0
