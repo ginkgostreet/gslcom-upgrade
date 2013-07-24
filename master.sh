@@ -6,6 +6,7 @@
 ##########
 # config #
 ##########
+CIVI_DB="chorusad_civic3x"
 WEBDIR="../../htdocs"
 WEB_USER="www-data"
 WEB_GROUP="www-data"
@@ -88,7 +89,7 @@ DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000
 		)
 	) as generated_query
 	FROM information_schema.VIEWS
-	WHERE TABLE_SCHEMA =  'chorusad_civic3x'
+	WHERE TABLE_SCHEMA =  "'"${CIVI_DB}"'"
 	AND (
 		TABLE_NAME LIKE  'DevRpt%'
 		OR TABLE_NAME = 'PleadgeBalance'
