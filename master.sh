@@ -42,6 +42,11 @@ set -e
 
 cd "${WEBROOT}"
 
+if ${FLAG_DEV}; then
+  echo "Enabling CiviCRM debugging..."
+  drush civicrm-enable-debug
+fi
+
 echo "Putting site into maintenance mode..."
 drush vset -y maintenance_mode 1
 drush cc all # just in case
@@ -146,3 +151,7 @@ chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 echo "Taking site out of maintenance mode..."
 drush vset -y maintenance_mode 0
 drush cc all # just in case
+
+if ${FLAG_DEV}; then
+  echo "Don't forget to disable debug mode!"
+fi
