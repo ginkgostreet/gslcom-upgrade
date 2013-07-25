@@ -25,16 +25,29 @@ else
   exit 1;
 fi
 
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+cd "${WEBROOT}"
+drush uli
+
+echo -e "\E[31mYou'll need to be logged in to the web UI for this to work;" \
+  "use the link above for that. This is a good time to do a last-minute" \
+  "sanity-check. Are you using the right .my.cnf? Did you update master.conf" \
+  "prior to running the script? If in doubt, cancel this upgrade now. Are" \
+  "ready to proceed? (y/n): \033[0m"
+read -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Installation canceled."
+  exit 1;
+fi
+
 # log CiviCRM-generated email instead of sending it
 if ${FLAG_DEV}; then
     sed -i "/CIVICRM_MAIL_LOG/c\define('CIVICRM_MAIL_LOG', 1);" \
         "${WEBROOT}"/sites/default/civicrm.settings.php
 fi
-
-# Exit immediately if a command exits with a non-zero status.
-set -e
-
-cd "${WEBROOT}"
 
 if ${FLAG_DEV}; then
   echo "Enabling CiviCRM debugging..."
