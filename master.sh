@@ -3,13 +3,6 @@
 # Accepts flag --no-dev. This script is run in dev mode by default. In dev
 # mode, CiviCRM is configured to send no mail at all.
 
-FLAG_DEV=true
-for arg in $*; do
-    if [[ "$arg" == "--no-dev" ]]; then
-        FLAG_DEV=false
-    fi
-done
-
 if [ `whoami` != "root" ]; then
     echo >&2 "This script must be run as root. Aborting."
     exit 1
@@ -17,6 +10,13 @@ fi
 
 CALLPATH=`dirname "$0"`
 ABS_CALLPATH="`( cd \"${CALLPATH}\" && pwd -P)`"
+
+FLAG_DEV=true
+for arg in $*; do
+    if [[ "$arg" == "--no-dev" ]]; then
+        FLAG_DEV=false
+    fi
+done
 
 if [ -f "${ABS_CALLPATH}"/master.conf ]; then
   source "${ABS_CALLPATH}"/master.conf
