@@ -155,10 +155,12 @@ chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
 chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
 chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 
-echo "Taking site out of maintenance mode..."
-drush vset -y maintenance_mode 0
 drush cc all # just in case
 
+SUCCESS_MSG="Upgrade complete. Don't forget to take the site out of" \
+  "maintenance mode once you've verified everything looks right."
 if ${FLAG_DEV}; then
-  echo "Don't forget to disable debug mode!"
+  SUCCESS_MSG+=" And don't forget to disable CiviCRM debug mode"'!'
 fi
+
+echo "${SUCCESS_MSG}"
