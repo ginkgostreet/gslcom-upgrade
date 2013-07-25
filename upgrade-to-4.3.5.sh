@@ -34,5 +34,5 @@ echo "Configuring scheduled jobs..."
 mysql ${CIVI_DB} < "${ABS_CALLPATH}/configure-scheduled-jobs.sql"
 
 echo "Replacing cron configuration..."
-crontab -l > "${ABS_CALLPATH}/cron.old"
+crontab -u ${CRON_USER} -l > "${ABS_CALLPATH}/cron.old"
 crontab "${ABS_CALLPATH}/cron.new"
