@@ -3,18 +3,6 @@
 # Accepts flag --no-dev. This script is run in dev mode by default. In dev
 # mode, CiviCRM is configured to send no mail at all.
 
-##########
-# config #
-##########
-CIVI_DB="chorusad_civic3x"
-#WEBDIR="../../htdocs"
-WEBROOT="/var/www/chorusamerica.localhost/htdocs"
-WEB_USER="www-data"
-WEB_GROUP="www-data"
-###########
-# /config #
-###########
-
 FLAG_DEV=true
 for arg in $*; do
     if [[ "$arg" == "--no-dev" ]]; then
@@ -29,7 +17,13 @@ fi
 
 CALLPATH=`dirname "$0"`
 ABS_CALLPATH="`( cd \"${CALLPATH}\" && pwd -P)`"
-#WEBROOT="${ABS_CALLPATH}/${WEBDIR}"
+
+if [ -f "${ABS_CALLPATH}"/master.conf ]; then
+  source "${ABS_CALLPATH}"/master.conf
+else
+  echo "Configuration file not found"
+  exit 1;
+fi
 
 # log CiviCRM-generated email instead of sending it
 if ${FLAG_DEV}; then
