@@ -61,12 +61,9 @@ drush cc all # just in case
 echo "Deleting legacy custom reports..."
 rm -rf "${WEBROOT}/ca_cust_rpt"
 
-echo "Salvaging custom module variable_membership..."
+echo "Removing custom module variable_membership..."
 drush -y dis variable_membership
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/variable_membership"
-mv "${WEBROOT}/sites/all/modules/civicrm/drupal/modules/variable_membership" \
-  "${WEBROOT}/sites/all/modules/"
+rm -rf "${WEBROOT}/sites/all/modules/civicrm/drupal/modules/variable_membership"
 
 echo "Dropping crufty tables..."
 DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000;
@@ -142,6 +139,19 @@ source "${ABS_CALLPATH}/upgrade-to-4.3.5.sh"
 
 echo "Cleaning up extraneous financial data..."
 mysql ${CIVI_DB} < "${ABS_CALLPATH}/clean-up-extraneous-financial-data.sql"
+
+echo "Removing variable_membership-specific code from the theme..."
+patch -p0 < "${ABS_CALLPATH}/patches/remove-variable_membership-code-from-theme.patch"
+
+echo "Enabling refactored variable_membership module..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/all/modules/variable_membership"
+mv "${ABS_CALLPATH}/refactored/modules/variable_membership" \
+  "${WEBROOT}/sites/all/modules/"
+drush -y en variable_membership
+
+echo "Updating JavaScript theming related to membership forms..."
+patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
 
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
