@@ -149,6 +149,7 @@ rm -rf "${WEBROOT}/sites/all/modules/variable_membership"
 mv "${ABS_CALLPATH}/refactored/modules/variable_membership" \
   "${WEBROOT}/sites/all/modules/"
 drush -y en variable_membership
+drush -y updatedb
 
 echo "Updating JavaScript theming related to membership forms..."
 patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
