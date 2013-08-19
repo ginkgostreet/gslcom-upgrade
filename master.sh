@@ -154,6 +154,9 @@ drush -y updatedb
 echo "Updating JavaScript theming related to membership forms..."
 patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
 
+echo "Removing JS override of contribution confirmation button text..."
+patch -p0 < "${ABS_CALLPATH}/patches/remove-js-override-of-button-text.patch"
+
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
 	if [[ "${MOD}" != "civicrm" ]]; then
