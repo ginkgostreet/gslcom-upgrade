@@ -140,6 +140,16 @@ source "${ABS_CALLPATH}/upgrade-to-4.3.5.sh"
 echo "Cleaning up extraneous financial data..."
 mysql ${CIVI_DB} < "${ABS_CALLPATH}/clean-up-extraneous-financial-data.sql"
 
+echo "Setting extensions directory..."
+sed -i '/ * Do not change anything below this line. Keep as is/i\
+ * Set extensions directory\
+ *\
+ */\
+\$civicrm_setting["Directory Preferences"]["extensionsDir"] = dirname\(__FILE__\) . "/files/civicrm/custom/extensions"; \
+\
+\/**\
+ *' sites/default/civicrm.settings.php
+
 echo "Removing variable_membership-specific code from the theme..."
 patch -p0 < "${ABS_CALLPATH}/patches/remove-variable_membership-code-from-theme.patch"
 
