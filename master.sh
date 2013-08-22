@@ -141,6 +141,9 @@ echo "Cleaning up extraneous financial data..."
 mysql ${CIVI_DB} < "${ABS_CALLPATH}/clean-up-extraneous-financial-data.sql"
 
 echo "Setting extensions directory..."
+if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/extensions ]; then
+  mkdir ${WEBROOT}/sites/default/files/civicrm/custom/extensions
+fi
 sed -i '/ * Do not change anything below this line. Keep as is/i\
  * Set extensions directory\
  *\
