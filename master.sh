@@ -125,6 +125,19 @@ echo "Making files directory writable..."
 chmod a+w "${WEBROOT}"/sites/default/files/
 chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
 
+if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4 ]; then
+  echo "Backing up PHP overrides..."
+  mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php \
+    ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4
+fi
+
+if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4 ]; then
+  echo "Backing up template overrides..."
+  mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template \
+    ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4
+fi
+
+
 echo "Making CiviCRM settings file writable..."
 chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
 
@@ -153,6 +166,18 @@ global \$civicrm_setting;\
 \
 \/**\
  *' sites/default/civicrm.settings.php
+
+echo "Copying in updated PHP overrides..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_php"
+mv "${ABS_CALLPATH}/refactored/custom_php" \
+  "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_php"
+
+echo "Copying in updated template overrides..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_template"
+mv "${ABS_CALLPATH}/refactored/custom_template" \
+  "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_template"
 
 echo "Removing variable_membership-specific code from the theme..."
 patch -p0 < "${ABS_CALLPATH}/patches/remove-variable_membership-code-from-theme.patch"
