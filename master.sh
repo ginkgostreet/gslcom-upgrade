@@ -190,6 +190,13 @@ mv "${ABS_CALLPATH}/refactored/modules/variable_membership" \
 drush -y en variable_membership
 drush -y updatedb
 
+echo "Enabling civicrm_display_membership_date_on_confirm module..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/all/modules/civicrm_display_membership_date_on_confirm"
+mv "${ABS_CALLPATH}/refactored/modules/civicrm_display_membership_date_on_confirm" \
+  "${WEBROOT}/sites/all/modules/"
+drush -y en civicrm_display_membership_date_on_confirm
+
 echo "Updating JavaScript theming related to membership forms..."
 patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
 
