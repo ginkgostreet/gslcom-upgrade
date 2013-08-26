@@ -148,6 +148,7 @@ sed -i '/ * Do not change anything below this line. Keep as is/i\
  * Set extensions directory\
  *\
  */\
+global \$civicrm_setting;\
 \$civicrm_setting["Directory Preferences"]["extensionsDir"] = dirname\(__FILE__\) . "/files/civicrm/custom/extensions"; \
 \
 \/**\
