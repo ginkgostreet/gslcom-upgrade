@@ -169,15 +169,15 @@ global \$civicrm_setting;\
 
 echo "Copying in updated PHP overrides..."
 # next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_php"
+rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/custom_php"
 mv "${ABS_CALLPATH}/refactored/custom_php" \
-  "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_php"
+  "${WEBROOT}/sites/default/files/civicrm/custom/custom_php"
 
 echo "Copying in updated template overrides..."
 # next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_template"
+rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/custom_template"
 mv "${ABS_CALLPATH}/refactored/custom_template" \
-  "${WEBROOT}/sites/defaults/files/civicrm/custom/custom_template"
+  "${WEBROOT}/sites/default/files/civicrm/custom/custom_template"
 
 echo "Removing variable_membership-specific code from the theme..."
 patch -p0 < "${ABS_CALLPATH}/patches/remove-variable_membership-code-from-theme.patch"
@@ -217,8 +217,7 @@ chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 
 drush cc all # just in case
 
-SUCCESS_MSG="Upgrade complete. Don't forget to take the site out of" \
-  "maintenance mode once you've verified everything looks right."
+SUCCESS_MSG="Upgrade complete. Don't forget to take the site out of maintenance mode once you've verified everything looks right."
 if ${FLAG_DEV}; then
   SUCCESS_MSG+=" And don't forget to disable CiviCRM debug mode"'!'
 fi
