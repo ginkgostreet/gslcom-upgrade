@@ -197,6 +197,13 @@ mv "${ABS_CALLPATH}/refactored/modules/civicrm_display_membership_date_on_confir
   "${WEBROOT}/sites/all/modules/"
 drush -y en civicrm_display_membership_date_on_confirm
 
+echo "Enabling civicrm_disable_skip_participant module..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/all/modules/civicrm_disable_skip_participant"
+mv "${ABS_CALLPATH}/refactored/modules/civicrm_disable_skip_participant" \
+  "${WEBROOT}/sites/all/modules/"
+drush -y en civicrm_disable_skip_participant
+
 echo "Updating JavaScript theming related to membership forms..."
 patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
 
