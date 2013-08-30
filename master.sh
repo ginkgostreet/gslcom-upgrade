@@ -204,6 +204,13 @@ mv "${ABS_CALLPATH}/refactored/modules/civicrm_disable_skip_participant" \
   "${WEBROOT}/sites/all/modules/"
 drush -y en civicrm_disable_skip_participant
 
+echo "Enabling civicrm_custom_contribution_confirmation module..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/all/modules/civicrm_custom_contribution_confirmation"
+mv "${ABS_CALLPATH}/refactored/modules/civicrm_custom_contribution_confirmation" \
+  "${WEBROOT}/sites/all/modules/"
+drush -y en civicrm_custom_contribution_confirmation
+
 echo "Updating JavaScript theming related to membership forms..."
 patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
 
