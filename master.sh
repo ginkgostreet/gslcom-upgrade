@@ -175,6 +175,13 @@ mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.dashboard" \
   "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
 drush cvapi extension.install key=org.chorusamerica.dashboard
 
+echo "Enabling custom CiviCRM appeal codes extension..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.appealcodes"
+mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.appealcodes" \
+  "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
+drush cvapi extension.install key=org.chorusamerica.appealcodes
+
 echo "Copying in updated PHP overrides..."
 # next line helps with dev where we might run this script many times over
 rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/custom_php"
