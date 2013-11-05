@@ -163,9 +163,17 @@ sed -i '/ * Do not change anything below this line. Keep as is/i\
  */\
 global \$civicrm_setting;\
 \$civicrm_setting["Directory Preferences"]["extensionsDir"] = dirname\(__FILE__\) . "/files/civicrm/custom/extensions"; \
+\$civicrm_setting["URL Preferences"]["extensionsURL"] = "sites/default/files/civicrm/custom/extensions"; \
 \
 \/**\
  *' sites/default/civicrm.settings.php
+
+echo "Enabling custom CiviCRM dashboard extension..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.dashboard"
+mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.dashboard" \
+  "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
+drush cvapi extension.install key=org.chorusamerica.dashboard
 
 echo "Copying in updated PHP overrides..."
 # next line helps with dev where we might run this script many times over
