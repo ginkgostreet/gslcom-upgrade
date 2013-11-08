@@ -1,5 +1,5 @@
 #!/bin/bash
-MY_TARGZ="civicrm-4.3.8-drupal6.tar.gz"
+MY_TARGZ="civicrm-4.3.5-drupal6.tar.gz"
 
 # TODO: if Civi tarball is not found, perhaps we should try to download it.
 if [[ ! ( -f "${ABS_CALLPATH}/${MY_TARGZ}" ) ]]; then
