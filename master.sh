@@ -147,8 +147,8 @@ source "${ABS_CALLPATH}/upgrade-to-3.4.8.sh"
 echo "Beginning upgrade to 4.1.5..."
 source "${ABS_CALLPATH}/upgrade-to-4.1.5.sh"
 
-echo "Beginning upgrade to 4.3.5..."
-source "${ABS_CALLPATH}/upgrade-to-4.3.5.sh"
+echo "Beginning upgrade to 4.3.x..."
+source "${ABS_CALLPATH}/upgrade-to-4.3.x.sh"
 
 echo "Cleaning up extraneous financial data..."
 mysql ${CIVI_DB} < "${ABS_CALLPATH}/clean-up-extraneous-financial-data.sql"
