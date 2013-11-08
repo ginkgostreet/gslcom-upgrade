@@ -125,18 +125,17 @@ echo "Making files directory writable..."
 chmod a+w "${WEBROOT}"/sites/default/files/
 chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
 
-if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4 ]; then
-  echo "Backing up PHP overrides..."
-  mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php \
-    ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4
-fi
+echo "Backing up PHP overrides..."
+# next line helps with dev where we might run this script many times over
+rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4
+mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php \
+  ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4
 
-if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4 ]; then
-  echo "Backing up template overrides..."
-  mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template \
-    ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4
-fi
-
+echo "Backing up template overrides..."
+# next line helps with dev where we might run this script many times over
+rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4
+mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template \
+  ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4
 
 echo "Making CiviCRM settings file writable..."
 chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
