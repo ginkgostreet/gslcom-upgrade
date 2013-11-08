@@ -153,6 +153,10 @@ source "${ABS_CALLPATH}/upgrade-to-4.3.5.sh"
 echo "Cleaning up extraneous financial data..."
 mysql ${CIVI_DB} < "${ABS_CALLPATH}/clean-up-extraneous-financial-data.sql"
 
+echo "Removing deprecated settings..."
+sed -i "s/ define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 );/\/\/ define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); \/\/ this setting has been deprecated/" \
+  ${WEBROOT}/sites/default/civicrm.settings.php
+
 echo "Setting extensions directory..."
 if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/extensions ]; then
   mkdir ${WEBROOT}/sites/default/files/civicrm/custom/extensions
