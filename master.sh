@@ -242,6 +242,9 @@ for MOD in "${CIVI_MODULES}"; do
 	fi
 done
 
+echo "Beginning upgrade to 4.3.8..."
+source "${ABS_CALLPATH}/upgrade-to-4.3.8.sh"
+
 echo "Adjusting file ownership and permissions..."
 chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
 chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
