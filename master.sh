@@ -166,7 +166,7 @@ sed -i '/ * Do not change anything below this line. Keep as is/i\
  */\
 global \$civicrm_setting;\
 \$civicrm_setting["Directory Preferences"]["extensionsDir"] = dirname\(__FILE__\) . "/files/civicrm/custom/extensions"; \
-\$civicrm_setting["URL Preferences"]["extensionsURL"] = "sites/default/files/civicrm/custom/extensions"; \
+\$civicrm_setting["URL Preferences"]["extensionsURL"] = CIVICRM_UF_BASEURL . "sites/default/files/civicrm/custom/extensions"; \
 \
 \/**\
  *' sites/default/civicrm.settings.php
