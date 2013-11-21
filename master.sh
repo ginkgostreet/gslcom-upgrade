@@ -171,6 +171,9 @@ global \$civicrm_setting;\
 \/**\
  *' sites/default/civicrm.settings.php
 
+echo "Refreshing CiviCRM extensions list..."
+drush -y cvapi extension.refresh
+
 echo "Enabling custom CiviCRM dashboard extension..."
 # next line helps with dev where we might run this script many times over
 rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.dashboard"
