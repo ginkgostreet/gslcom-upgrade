@@ -248,6 +248,9 @@ done
 echo "Beginning upgrade to 4.3.8..."
 source "${ABS_CALLPATH}/upgrade-to-4.3.8.sh"
 
+echo "Correcting price set record for donate page..."
+echo "UPDATE civicrm_price_set SET extends = '2' WHERE id = 21;" | mysql ${CIVI_DB}
+
 echo "Adjusting file ownership and permissions..."
 chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
 chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
