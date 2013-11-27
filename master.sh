@@ -238,6 +238,12 @@ patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch
 echo "Removing JS override of contribution confirmation button text..."
 patch -p0 < "${ABS_CALLPATH}/patches/remove-js-override-of-button-text.patch"
 
+echo "Fixing donation page toggler and label..."
+patch -p0 < "${ABS_CALLPATH}/patches/fix-donation-page-toggler-and-label.patch"
+
+echo "Fixing selectors for two-columns class..."
+patch -p0 < "${ABS_CALLPATH}/patches/update-selectors-for-two-columns-class.patch"
+
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
 	if [[ "${MOD}" != "civicrm" ]]; then
