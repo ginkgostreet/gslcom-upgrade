@@ -259,7 +259,7 @@ echo "Adding custom credit card helper text..."
 patch -p0 < "${ABS_CALLPATH}/patches/add-credit-card-help-text.patch"
 
 echo "Updating publications purchase JavaScript..."
-patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
+patch -p0 < "${ABS_CALLPATH}/patches/update-publications-purchase-js.patch"
 
 echo "Fixing user dashboard module..."
 patch -p0 < "${ABS_CALLPATH}/patches/fix-user-dashboard-module.patch"
