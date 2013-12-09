@@ -258,6 +258,9 @@ patch -p0 < "${ABS_CALLPATH}/patches/update-selectors-for-two-columns-class.patc
 echo "Adding custom credit card helper text..."
 patch -p0 < "${ABS_CALLPATH}/patches/add-credit-card-help-text.patch"
 
+echo "Updating publications purchase JavaScript..."
+patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
+
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
 	if [[ "${MOD}" != "civicrm" ]]; then
