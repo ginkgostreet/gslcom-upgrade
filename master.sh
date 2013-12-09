@@ -65,6 +65,10 @@ echo "Removing custom module variable_membership..."
 drush -y dis variable_membership
 rm -rf "${WEBROOT}/sites/all/modules/civicrm/drupal/modules/variable_membership"
 
+echo "Removing custom module chaPurchase..."
+drush -y dis chaPurchase
+rm -rf "${WEBROOT}/sites/all/modules/chaPurchase"
+
 echo "Dropping crufty tables..."
 DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000;
 	SELECT
@@ -210,6 +214,13 @@ mv "${ABS_CALLPATH}/refactored/modules/variable_membership" \
   "${WEBROOT}/sites/all/modules/"
 drush -y en variable_membership
 drush -y updatedb
+
+echo "Enabling refactored chaPurchase module..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/all/modules/chaPurchase"
+mv "${ABS_CALLPATH}/refactored/modules/chaPurchase" \
+  "${WEBROOT}/sites/all/modules/"
+drush -y en chaPurchase
 
 echo "Enabling civicrm_display_membership_date_on_confirm module..."
 # next line helps with dev where we might run this script many times over
