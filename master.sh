@@ -69,6 +69,10 @@ echo "Removing custom module chaPurchase..."
 drush -y dis chaPurchase
 rm -rf "${WEBROOT}/sites/all/modules/chaPurchase"
 
+echo "Removing custom module user_dashboard..."
+drush -y dis user_dashboard
+rm -rf "${WEBROOT}/sites/all/modules/user_dashboard"
+
 echo "Dropping crufty tables..."
 DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000;
 	SELECT
@@ -222,6 +226,13 @@ mv "${ABS_CALLPATH}/refactored/modules/chaPurchase" \
   "${WEBROOT}/sites/all/modules/"
 drush -y en chaPurchase
 
+echo "Enabling refactored user_dashboard module..."
+# next line helps with dev where we might run this script many times over
+rm -rf "${WEBROOT}/sites/all/modules/user_dashboard"
+mv "${ABS_CALLPATH}/refactored/modules/user_dashboard" \
+  "${WEBROOT}/sites/all/modules/"
+drush -y en user_dashboard
+
 echo "Enabling civicrm_display_membership_date_on_confirm module..."
 # next line helps with dev where we might run this script many times over
 rm -rf "${WEBROOT}/sites/all/modules/civicrm_display_membership_date_on_confirm"
@@ -260,9 +271,6 @@ patch -p0 < "${ABS_CALLPATH}/patches/add-credit-card-help-text.patch"
 
 echo "Updating publications purchase JavaScript..."
 patch -p0 < "${ABS_CALLPATH}/patches/update-publications-purchase-js.patch"
-
-echo "Fixing user dashboard module..."
-patch -p0 < "${ABS_CALLPATH}/patches/fix-user-dashboard-module.patch"
 
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
