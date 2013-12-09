@@ -176,20 +176,20 @@ global \$civicrm_setting;\
  *' sites/default/civicrm.settings.php
 
 echo "Refreshing CiviCRM extensions list..."
-drush -y cvapi extension.refresh
-
-echo "Enabling custom CiviCRM dashboard extension..."
 # next line helps with dev where we might run this script many times over
 rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.dashboard"
 mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.dashboard" \
   "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
-drush cvapi extension.install key=org.chorusamerica.dashboard
-
-echo "Enabling custom CiviCRM appeal codes extension..."
 # next line helps with dev where we might run this script many times over
 rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.appealcodes"
 mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.appealcodes" \
   "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
+drush -y cvapi extension.refresh
+
+echo "Enabling custom CiviCRM dashboard extension..."
+drush cvapi extension.install key=org.chorusamerica.dashboard
+
+echo "Enabling custom CiviCRM appeal codes extension..."
 drush cvapi extension.install key=org.chorusamerica.appealcodes
 
 echo "Copying in updated PHP overrides..."
