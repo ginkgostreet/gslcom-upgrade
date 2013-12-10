@@ -181,12 +181,12 @@ global \$civicrm_setting;\
 
 echo "Refreshing CiviCRM extensions list..."
 # next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.dashboard"
+rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/*"
 mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.dashboard" \
   "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/org.chorusamerica.appealcodes"
 mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.appealcodes" \
+  "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
+mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.membership.frontend.finetune" \
   "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
 drush -y cvapi extension.refresh
 
@@ -195,6 +195,9 @@ drush cvapi extension.install key=org.chorusamerica.dashboard
 
 echo "Enabling custom CiviCRM appeal codes extension..."
 drush cvapi extension.install key=org.chorusamerica.appealcodes
+
+echo "Enabling custom CiviCRM fine-tuned membership forms extension..."
+drush cvapi extension.install key=org.chorusamerica.membership.frontend.finetune
 
 echo "Copying in updated PHP overrides..."
 # next line helps with dev where we might run this script many times over
