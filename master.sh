@@ -285,6 +285,9 @@ done
 echo "Beginning upgrade to 4.3.8..."
 source "${ABS_CALLPATH}/upgrade-to-4.3.8.sh"
 
+echo "Patching CiviCRM Views integration..."
+patch -p0 < "${ABS_CALLPATH}/patches/civicrm_handler_filter_state.inc.patch"
+
 echo "Correcting price set record for donate page..."
 echo "UPDATE civicrm_price_set SET extends = '2' WHERE id = 21;" | mysql ${CIVI_DB}
 
