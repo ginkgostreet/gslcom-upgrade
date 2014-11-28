@@ -28,20 +28,8 @@ fi
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-cd "${WEBROOT}"
-drush uli
-
-echo -e "\E[31mYou'll need to be logged in to the web UI for this to work;" \
-  "use the link above for that. This is a good time to do a last-minute" \
-  "sanity-check. Are you using the right .my.cnf? Did you update master.conf" \
-  "prior to running the script? If in doubt, cancel this upgrade now. Are" \
-  "ready to proceed? (y/n): \033[0m"
-read -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo "Installation canceled."
-  exit 1;
-fi
+# get into a drush-friendly context
+pushd ${WEBROOT}/sites/default > /dev/null
 
 # log CiviCRM-generated email instead of sending it
 if ${FLAG_DEV}; then
@@ -58,65 +46,9 @@ echo "Putting site into maintenance mode..."
 drush vset -y maintenance_mode 1
 drush cc all # just in case
 
-echo "Deleting legacy custom reports..."
-rm -rf "${WEBROOT}/ca_cust_rpt"
+echo "Disabling CiviCRM-related Drupal modules..."
+drush -y dis variable_membership chaPurchase user_dashboard
 
-echo "Removing custom module variable_membership..."
-drush -y dis variable_membership
-rm -rf "${WEBROOT}/sites/all/modules/civicrm/drupal/modules/variable_membership"
-
-echo "Removing custom module chaPurchase..."
-drush -y dis chaPurchase
-rm -rf "${WEBROOT}/sites/all/modules/chaPurchase"
-
-echo "Removing custom module user_dashboard..."
-drush -y dis user_dashboard
-rm -rf "${WEBROOT}/sites/all/modules/user_dashboard"
-
-echo "Dropping crufty tables..."
-DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000;
-	SELECT
-	CONCAT(
-		'DROP TABLE IF EXISTS ',
-	        GROUP_CONCAT(
-			CONCAT('\\\`', TABLE_NAME, '\\\`')
-			SEPARATOR  ','
-		)
-	) as generated_query
-	FROM information_schema.TABLES
-	WHERE TABLE_SCHEMA =  'chorusad_civic3x'
-	AND (
-		TABLE_NAME LIKE  'civicrm_export_temp%'
-		OR TABLE_NAME LIKE  'civicrm_import_job%'
-		OR TABLE_NAME LIKE  'civicrm_task_action_temp%'
-		OR TABLE_NAME LIKE  'civicrm_export_temp%'
-		OR TABLE_NAME = 'x_AssociationOf'
-	)" | sed 1d)
-if [[ "${DROP_QUERY}" != "NULL" ]]; then
-  drush civicrm-sql-query "${DROP_QUERY}"
-fi
-
-echo "Dropping non-CiviCRM views..."
-DROP_QUERY=$(drush civicrm-sql-query "SET SESSION group_concat_max_len = 1000000;
-	SELECT
-	CONCAT(
-                'DROP VIEW IF EXISTS ',
-                GROUP_CONCAT(
-			CONCAT('\\\`', TABLE_NAME, '\\\`')
-			SEPARATOR  ','
-		)
-	) as generated_query
-	FROM information_schema.VIEWS
-	WHERE TABLE_SCHEMA =  "'"${CIVI_DB}"'"
-	AND (
-		TABLE_NAME LIKE  'DevRpt%'
-		OR TABLE_NAME = 'PleadgeBalance'
-	)" | sed 1d)
-if [[ "${DROP_QUERY}" != "NULL" ]]; then
-  drush civicrm-sql-query "${DROP_QUERY}"
-fi
-
-echo "Disabling CiviCRM-related modules..."
 set +e
 CIVI_MODULES="`drush pml --status=enabled --pipe | grep civi`"
 for MOD in ${CIVI_MODULES}; do
@@ -133,153 +65,41 @@ echo "Making files directory writable..."
 chmod a+w "${WEBROOT}"/sites/default/files/
 chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
 
-echo "Backing up PHP overrides..."
+echo "Backing up PHP and template customizations..."
 # next line helps with dev where we might run this script many times over
-rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4
+rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3
 mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php \
-  ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.3.4
-
-echo "Backing up template overrides..."
+  ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3
 # next line helps with dev where we might run this script many times over
-rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4
+rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3
 mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template \
-  ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.3.4
+  ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3
+
+echo "Disabling custom CiviCRM extensions"
+CIVI_EXT="org.chorusamerica.appealcodes org.chorusamerica.dashboard org.chorusamerica.membership.frontend.finetune"
+for X in ${CIVI_EXT}; do
+  drush cvapi extension.disable key=${X}
+  rm -rf "${WEBROOT}"/sites/default/files/civicrm/custom/extensions/${X}
+done
 
 echo "Making CiviCRM settings file writable..."
 chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
 
-echo "Beginning upgrade to 3.4.8..."
-source "${ABS_CALLPATH}/upgrade-to-3.4.8.sh"
-
-echo "Beginning upgrade to 4.1.5..."
-source "${ABS_CALLPATH}/upgrade-to-4.1.5.sh"
-
-echo "Beginning upgrade to 4.3.5..."
-source "${ABS_CALLPATH}/upgrade-to-4.3.5.sh"
-
-echo "Cleaning up extraneous financial data..."
-mysql ${CIVI_DB} < "${ABS_CALLPATH}/clean-up-extraneous-financial-data.sql"
-
-echo "Removing deprecated settings..."
-sed -i "s/ define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 );/\/\/ define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); \/\/ this setting has been deprecated/" \
-  ${WEBROOT}/sites/default/civicrm.settings.php
-
-echo "Setting extensions directory..."
-if [ ! -d ${WEBROOT}/sites/default/files/civicrm/custom/extensions ]; then
-  mkdir ${WEBROOT}/sites/default/files/civicrm/custom/extensions
-fi
-sed -i '/ * Do not change anything below this line. Keep as is/i\
- * Set extensions directory\
- *\
- */\
-global \$civicrm_setting;\
-\$civicrm_setting["Directory Preferences"]["extensionsDir"] = dirname\(__FILE__\) . "/files/civicrm/custom/extensions"; \
-\$civicrm_setting["URL Preferences"]["extensionsURL"] = CIVICRM_UF_BASEURL . "sites/default/files/civicrm/custom/extensions"; \
-\
-\/**\
- *' sites/default/civicrm.settings.php
+echo "Beginning upgrade to 4.5.4..."
+source "${ABS_CALLPATH}/upgrade-to-4.5.4.sh"
 
 echo "Refreshing CiviCRM extensions list..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/extensions/*"
-mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.dashboard" \
-  "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
-mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.appealcodes" \
-  "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
-mv "${ABS_CALLPATH}/refactored/extensions/org.chorusamerica.membership.frontend.finetune" \
-  "${WEBROOT}/sites/default/files/civicrm/custom/extensions"
 drush -y cvapi extension.refresh
 
-echo "Enabling custom CiviCRM dashboard extension..."
-drush cvapi extension.install key=org.chorusamerica.dashboard
+echo "Enabling custom CiviCRM extensions..."
+for X in ${CIVI_EXT}; do
+  git clone git@bitbucket.org:chorusamerica/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
+  drush cvapi extension.enable key=${X}
+done
 
-echo "Enabling custom CiviCRM appeal codes extension..."
-drush cvapi extension.install key=org.chorusamerica.appealcodes
-
-echo "Enabling custom CiviCRM fine-tuned membership forms extension..."
-drush cvapi extension.install key=org.chorusamerica.membership.frontend.finetune
-
-echo "Copying in updated PHP overrides..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/custom_php"
-mv "${ABS_CALLPATH}/refactored/custom_php" \
-  "${WEBROOT}/sites/default/files/civicrm/custom/custom_php"
-
-echo "Copying in updated template overrides..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/default/files/civicrm/custom/custom_template"
-mv "${ABS_CALLPATH}/refactored/custom_template" \
-  "${WEBROOT}/sites/default/files/civicrm/custom/custom_template"
-
-echo "Removing variable_membership-specific code from the theme..."
-patch -p0 < "${ABS_CALLPATH}/patches/remove-variable_membership-code-from-theme.patch"
-
-echo "Enabling refactored variable_membership module..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/variable_membership"
-mv "${ABS_CALLPATH}/refactored/modules/variable_membership" \
-  "${WEBROOT}/sites/all/modules/"
-drush -y en variable_membership
-drush -y updatedb
-
-echo "Enabling refactored chaPurchase module..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/chaPurchase"
-mv "${ABS_CALLPATH}/refactored/modules/chaPurchase" \
-  "${WEBROOT}/sites/all/modules/"
-drush -y en chaPurchase
-
-echo "Enabling refactored user_dashboard module..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/user_dashboard"
-mv "${ABS_CALLPATH}/refactored/modules/user_dashboard" \
-  "${WEBROOT}/sites/all/modules/"
-drush -y en user_dashboard
-
-echo "Enabling civicrm_display_membership_date_on_confirm module..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/civicrm_display_membership_date_on_confirm"
-mv "${ABS_CALLPATH}/refactored/modules/civicrm_display_membership_date_on_confirm" \
-  "${WEBROOT}/sites/all/modules/"
-drush -y en civicrm_display_membership_date_on_confirm
-
-echo "Enabling civicrm_disable_skip_participant module..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/civicrm_disable_skip_participant"
-mv "${ABS_CALLPATH}/refactored/modules/civicrm_disable_skip_participant" \
-  "${WEBROOT}/sites/all/modules/"
-drush -y en civicrm_disable_skip_participant
-
-echo "Enabling civicrm_custom_contribution_confirmation module..."
-# next line helps with dev where we might run this script many times over
-rm -rf "${WEBROOT}/sites/all/modules/civicrm_custom_contribution_confirmation"
-mv "${ABS_CALLPATH}/refactored/modules/civicrm_custom_contribution_confirmation" \
-  "${WEBROOT}/sites/all/modules/"
-drush -y en civicrm_custom_contribution_confirmation
-
-echo "Updating JavaScript theming related to membership forms..."
-patch -p0 < "${ABS_CALLPATH}/patches/update-js-theming-of-membership-forms.patch"
-
-echo "Removing JS override of contribution confirmation button text..."
-patch -p0 < "${ABS_CALLPATH}/patches/remove-js-override-of-button-text.patch"
-
-echo "Fixing donation page toggler and label..."
-patch -p0 < "${ABS_CALLPATH}/patches/fix-donation-page-toggler-and-label.patch"
-
-echo "Updating selectors for two-columns class..."
-patch -p0 < "${ABS_CALLPATH}/patches/update-selectors-for-two-columns-class.patch"
-
-echo "Adding custom credit card helper text..."
-patch -p0 < "${ABS_CALLPATH}/patches/add-credit-card-help-text.patch"
-
-echo "Updating publications purchase JavaScript..."
-patch -p0 < "${ABS_CALLPATH}/patches/update-publications-purchase-js.patch"
-
-echo "Updating additional contribution selectors..."
-patch -p0 < "${ABS_CALLPATH}/patches/update-additional-contribution-selectors.patch"
-
-echo "Altering text for billing address checkbox..."
-patch -p0 < "${ABS_CALLPATH}/patches/alter-billing-address-checkbox-text.patch"
+echo "Enabling CiviCRM-related Drupal modules..."
+drush -y en variable_membership chaPurchase user_dashboard civicrm_display_membership_date_on_confirm \
+  civicrm_disable_skip_participant civicrm_custom_contribution_confirmation
 
 echo "Re-enabling CiviCRM-related modules..."
 for MOD in "${CIVI_MODULES}"; do
@@ -288,14 +108,11 @@ for MOD in "${CIVI_MODULES}"; do
 	fi
 done
 
-echo "Beginning upgrade to 4.3.8..."
-source "${ABS_CALLPATH}/upgrade-to-4.3.8.sh"
-
-echo "Patching CiviCRM Views integration..."
-patch -p0 < "${ABS_CALLPATH}/patches/civicrm_handler_filter_state.inc.patch"
-
-echo "Correcting price set record for donate page..."
-echo "UPDATE civicrm_price_set SET extends = '2' WHERE id = 21;" | mysql ${CIVI_DB}
+echo "Restoring PHP and template customizations..."
+mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3 \
+  ${WEBROOT}/sites/default/files/civicrm/custom/custom_php
+mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3 \
+  ${WEBROOT}/sites/default/files/civicrm/custom/custom_template
 
 echo "Adjusting file ownership and permissions..."
 chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
