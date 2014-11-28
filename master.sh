@@ -37,10 +37,10 @@ if ${FLAG_DEV}; then
         "${WEBROOT}"/sites/default/civicrm.settings.php
 fi
 
-if ${FLAG_DEV}; then
-  echo "Enabling CiviCRM debugging..."
-  drush civicrm-enable-debug
-fi
+#if ${FLAG_DEV}; then
+#  echo "Enabling CiviCRM debugging..."
+#  drush civicrm-enable-debug
+#fi
 
 echo "Putting site into maintenance mode..."
 drush vset -y maintenance_mode 1
