@@ -51,11 +51,13 @@ drush -y dis variable_membership chaPurchase user_dashboard
 
 set +e
 CIVI_MODULES="`drush pml --status=enabled --pipe | grep civi`"
+CIVI_MODULES_STR=""
 for MOD in ${CIVI_MODULES}; do
-	if [[ "${MOD}" != "civicrm" ]]; then
-		drush -y dis ${MOD}
-	fi
+  if [[ "${MOD}" != "civicrm" ]]; then
+    CIVI_MODULES_STR="${CIVI_MODULES_STR} ${MOD}"
+  fi
 done
+drush -y dis ${CIVI_MODULES_STR}
 set -e
 
 echo "Deleting CiviCRM cache..."
