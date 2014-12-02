@@ -47,11 +47,9 @@ drush vset -y maintenance_mode 1
 drush cc all # just in case
 
 echo "Disabling CiviCRM-related Drupal modules..."
-drush -y dis variable_membership chaPurchase user_dashboard
-
 set +e
 CIVI_MODULES="`drush pml --status=enabled --pipe | grep civi`"
-CIVI_MODULES_STR=""
+CIVI_MODULES_STR="variable_membership chaPurchase user_dashboard"
 for MOD in ${CIVI_MODULES}; do
   if [[ "${MOD}" != "civicrm" ]]; then
     CIVI_MODULES_STR="${CIVI_MODULES_STR} ${MOD}"
@@ -102,15 +100,7 @@ for X in ${CIVI_EXT}; do
 done
 
 echo "Enabling CiviCRM-related Drupal modules..."
-drush -y en variable_membership chaPurchase user_dashboard civicrm_display_membership_date_on_confirm \
-  civicrm_disable_skip_participant civicrm_custom_contribution_confirmation
-
-echo "Re-enabling CiviCRM-related modules..."
-for MOD in "${CIVI_MODULES}"; do
-	if [[ "${MOD}" != "civicrm" ]]; then
-		drush -y en ${MOD}
-	fi
-done
+drush -y en ${CIVI_MODULES_STR}
 
 echo "Restoring PHP and template customizations..."
 mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3 \
