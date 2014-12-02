@@ -12,9 +12,11 @@ CALLPATH=`dirname "$0"`
 ABS_CALLPATH="`( cd \"${CALLPATH}\" && pwd -P)`"
 
 FLAG_DEV=true
+GIT_REMOTE=GIT_REMOTE_DEV
 for arg in $*; do
     if [[ "$arg" == "--no-dev" ]]; then
         FLAG_DEV=false
+        GIT_REMOTE=GIT_REMOTE_LIVE
     fi
 done
 
@@ -65,15 +67,9 @@ echo "Making files directory writable..."
 sudo chmod a+w "${WEBROOT}"/sites/default/files/
 sudo chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
 
-echo "Backing up PHP and template customizations..."
-# next line helps with dev where we might run this script many times over
-rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3
-mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php \
-  ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3
-# next line helps with dev where we might run this script many times over
-rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3
-mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template \
-  ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3
+echo "Disabling PHP and template customizations..."
+rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_php
+rm -rf ${WEBROOT}/sites/default/files/civicrm/custom/custom_template
 
 echo "Disabling custom CiviCRM extensions"
 CIVI_EXT="org.chorusamerica.appealcodes org.chorusamerica.dashboard org.chorusamerica.membership.frontend.finetune"
@@ -102,11 +98,9 @@ done
 echo "Enabling CiviCRM-related Drupal modules..."
 drush -y en ${CIVI_MODULES_STR}
 
-echo "Restoring PHP and template customizations..."
-mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_php.4.3 \
-  ${WEBROOT}/sites/default/files/civicrm/custom/custom_php
-mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3 \
-  ${WEBROOT}/sites/default/files/civicrm/custom/custom_template
+echo "Enabling PHP and template customizations..."
+git clone ${GIT_REMOTE}/org.chorusamerica.custom.php.git ${WEBROOT}/sites/default/files/civicrm/custom/custom_php
+git clone ${GIT_REMOTE}/org.chorusamerica.custom.template.git ${WEBROOT}/sites/default/files/civicrm/custom/custom_template
 
 echo "Adjusting file ownership and permissions..."
 sudo chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
