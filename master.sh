@@ -3,8 +3,8 @@
 # Accepts flag --no-dev. This script is run in dev mode by default. In dev
 # mode, CiviCRM is configured to send no mail at all.
 
-if [ `whoami` != "root" ]; then
-    echo >&2 "This script must be run as root. Aborting."
+if [ `whoami` == "root" ]; then
+    echo >&2 "Don't run as root. I need access to your environment for SSH config, git identify, etc. Aborting."
     exit 1
 fi
 
@@ -64,8 +64,8 @@ echo "Deleting CiviCRM cache..."
 rm -rf "${WEBROOT}"/sites/default/files/civicrm/templates_c/* "${WEBROOT}"/sites/default/files/civicrm/ConfigAndLog/Config.IDS.ini
 
 echo "Making files directory writable..."
-chmod a+w "${WEBROOT}"/sites/default/files/
-chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
+sudo chmod a+w "${WEBROOT}"/sites/default/files/
+sudo chmod -R a+w "${WEBROOT}"/sites/default/files/civicrm/
 
 echo "Backing up PHP and template customizations..."
 # next line helps with dev where we might run this script many times over
@@ -119,9 +119,9 @@ mv ${WEBROOT}/sites/default/files/civicrm/custom/custom_template.4.3 \
   ${WEBROOT}/sites/default/files/civicrm/custom/custom_template
 
 echo "Adjusting file ownership and permissions..."
-chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
-chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
-chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
+sudo chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
+sudo chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
+sudo chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 
 drush cc all # just in case
 
