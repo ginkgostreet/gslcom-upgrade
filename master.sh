@@ -91,11 +91,13 @@ echo "Beginning upgrade to 4.5.4..."
 source "${ABS_CALLPATH}/upgrade-to-4.5.4.sh"
 
 echo "Refreshing CiviCRM extensions list..."
+for X in ${CIVI_EXT}; do
+  git clone git@bitbucket.org:chorusamerica/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
+done
 drush -y cvapi extension.refresh
 
 echo "Enabling custom CiviCRM extensions..."
 for X in ${CIVI_EXT}; do
-  git clone git@bitbucket.org:chorusamerica/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
   drush cvapi extension.enable key=${X}
 done
 
