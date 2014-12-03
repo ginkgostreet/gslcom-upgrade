@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# This is a sample configuration file for the upgrade. Copy this into a file named master.conf. In it,
+# adjust the configurations below per your environment.
+
+CIVI_DB="" # the name of the CiviCRM database
+WEBROOT="/var/www/example.com/htdocs" # the webroot of the CMS; i.e., where .htaccess and index.php live
+WEB_USER="www-data" # what user does Apache run as
+WEB_GROUP="www-data" # what is Apache's primary group
+GIT_REMOTE_DEV="~/repos" # for test upgrades, where should we clone repos from (local repos will run much faster)
+GIT_REMOTE_LIVE="git@bitbucket.org:my_team" # for the live upgrade, where should we clone repos from (probably bitbucket)
