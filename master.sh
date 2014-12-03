@@ -11,21 +11,21 @@ fi
 CALLPATH=`dirname "$0"`
 ABS_CALLPATH="`( cd \"${CALLPATH}\" && pwd -P)`"
 
-FLAG_DEV=true
-GIT_REMOTE=GIT_REMOTE_DEV
-for arg in $*; do
-    if [[ "$arg" == "--no-dev" ]]; then
-        FLAG_DEV=false
-        GIT_REMOTE=GIT_REMOTE_LIVE
-    fi
-done
-
 if [ -f "${ABS_CALLPATH}"/master.conf ]; then
   source "${ABS_CALLPATH}"/master.conf
 else
   echo "Configuration file not found"
   exit 1;
 fi
+
+FLAG_DEV=true
+GIT_REMOTE=${GIT_REMOTE_DEV}
+for arg in $*; do
+    if [[ "$arg" == "--no-dev" ]]; then
+        FLAG_DEV=false
+        GIT_REMOTE=${GIT_REMOTE_LIVE}
+    fi
+done
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
