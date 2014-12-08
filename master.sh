@@ -85,7 +85,8 @@ echo "Beginning upgrade to 4.5.4..."
 source "${ABS_CALLPATH}/upgrade-to-4.5.4.sh"
 
 echo "Upgrading custom message templates..."
-echo 'UPDATE `${CIVI_DB}`.`civicrm_msg_template` SET `msg_text` = "' `cat ${ABS_CALLPATH}/msg_templates/19.txt` '", `msg_html` = "' `cat ${ABS_CALLPATH}/msg_templates/19.html` '" WHERE id=19' | mysql 
+# redirect stderr to /dev/null because we're using a deprecated (and hence noisy) PHP function
+${ABS_CALLPATH}/msg_templates/generate_query.php ${CIVI_DB} 19 2> /dev/null | mysql
 
 echo "Refreshing CiviCRM extensions list..."
 for X in ${CIVI_EXT}; do
