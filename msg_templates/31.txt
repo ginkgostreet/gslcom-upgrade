@@ -79,7 +79,6 @@
 ===========================================================
 {ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
 {/if}
-
 {if $receive_date}
 
 {ts}Date{/ts}: {$receive_date|crmDate}
@@ -94,9 +93,7 @@
 {/if}
 {if $is_recur}
 {if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
-{ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can cancel the auto-renewal option by visiting this web page: %1.{/ts}
-
-{ts 1=$updateSubscriptionBillingUrl}You can update billing details for this automatically renewed membership by <a href="%1">visiting this web page</a>.{/ts}
+{ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by visiting this web page: %1.{/ts}
 {/if}
 {/if}
 
@@ -116,7 +113,7 @@
 ===========================================================
 {ts}Display In Honor Roll{/ts}: {if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}
 
-{if $pcp_roll_nickname}{ts}Nickname{/ts}: {$pcp_roll_nickname}{/if}
+{if $pcp_roll_nickname}{ts}Nick Name{/ts}: {$pcp_roll_nickname}{/if}
 
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 

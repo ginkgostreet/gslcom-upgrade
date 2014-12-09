@@ -16,7 +16,7 @@
 {ts}Contribution Information{/ts}
 
 ===========================================================
-{if $lineItem and $priceSetID and !$is_quick_config}
+{if $lineItem and $priceSetID}
 {foreach from=$lineItem item=value key=priceset}
 ---------------------------------------------------------
 {capture assign=ts_item}{ts}Item{/ts}{/capture}
@@ -43,21 +43,15 @@
 {ts}Transaction #{/ts}: {$trxn_id}
 {/if}
 
-{if $is_recur and ($contributeMode eq 'notify' or $contributeMode eq 'directIPN')}
-{ts}This is a recurring contribution. You can cancel future contributions at:{/ts}
+{if $is_recur}
+{if $contributeMode eq 'notify'}
+{ts}This is a recurring contribution. You can modify or cancel future contributions by logging in to your account at:{/ts}
 
 {$cancelSubscriptionUrl}
-
-{if $updateSubscriptionBillingUrl}
-{ts}You can update billing details for this recurring contribution at:{/ts}
-
-{$updateSubscriptionBillingUrl}
+{elseif $contributeMode eq 'directIPN' and $receiptFromEmail}
+{ts 1=$receiptFromEmail}This is a recurring contribution. To modify or cancel future contributions please contact us at %1.{/ts}
 
 {/if}
-{ts}You can update recurring contribution amount or change the number of installments for this recurring contribution at:{/ts}
-
-{$updateSubscriptionUrl}
-
 {/if}
 
 {if $honor_block_is_active}
@@ -84,7 +78,7 @@
 ===========================================================
 {ts}Display In Honor Roll{/ts}: {if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}
 
-{if $pcp_roll_nickname}{ts}Nickname{/ts}: {$pcp_roll_nickname}{/if}
+{if $pcp_roll_nickname}{ts}Nick Name{/ts}: {$pcp_roll_nickname}{/if}
 
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 
@@ -175,7 +169,7 @@
 {/if}
 
 
-{if $customPost}
+{if $customPost AND ! ( $customPost_grouptitle eq 'Detail Purchase Form' )}{* show normal post profile except on purchase pages. the only change is this AND NOT part *}
 ===========================================================
 {$customPost_grouptitle}
 
@@ -183,6 +177,16 @@
 {foreach from=$customPost item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
  {$customName}: {$customValue}
+{/if}
+{/foreach}
+{/if}{if $customPost AND ( $customPost_grouptitle eq 'Detail Purchase Form' )}
+===========================================================
+Your Purchase
+
+===========================================================
+{foreach from=$customPost item=customValue key=customName}
+{if $customName eq 'Purchase A-Item Description' OR $customName eq 'Purchase B-Item Description' OR $customName eq 'Purchase C-Item Description' OR $customName eq 'Purchase D-Item Description' OR $customNa$
+{$customValue}
 {/if}
 {/foreach}
 {/if}

@@ -75,13 +75,15 @@
 
 
      {if $amount}
+
+
       <tr>
        <th {$headerStyle}>
         {ts}Membership Fee{/ts}
        </th>
       </tr>
 
-      {if !$useForMember and $membership_amount and $is_quick_config}
+      {if !$useForMember && $membership_amount}
 
        <tr>
         <td {$labelStyle}>
@@ -121,7 +123,7 @@
         </td>
        </tr>
 
-      {elseif !$useForMember && $lineItem and $priceSetID and !$is_quick_config}
+      {elseif !$useForMember && $lineItem and $priceSetID}
 
        {foreach from=$lineItem item=value key=priceset}
         <tr>
@@ -163,14 +165,16 @@
        </tr>
 
       {else}
-       {if $useForMember && $lineItem and !$is_quick_config}
+       {if $useForMember && $lineItem}
        {foreach from=$lineItem item=value key=priceset}
         <tr>
          <td colspan="2" {$valueStyle}>
           <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
            <tr>
             <th>{ts}Item{/ts}</th>
-            <th>{ts}Fee{/ts}</th>
+            <th>{ts}Qty{/ts}</th>
+            <th>{ts}Each{/ts}</th>
+            <th>{ts}Total{/ts}</th>
       <th>{ts}Membership Start Date{/ts}</th>
       <th>{ts}Membership End Date{/ts}</th>
            </tr>
@@ -178,6 +182,12 @@
             <tr>
              <td>
              {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div>{$line.description|truncate:30:"..."}</div>{/if}
+             </td>
+             <td>
+              {$line.qty}
+             </td>
+             <td>
+              {$line.unit_price|crmMoney}
              </td>
              <td>
               {$line.line_total|crmMoney}
@@ -227,6 +237,7 @@
 
      {/if}
 
+
      {if $receive_date}
       <tr>
        <td {$labelStyle}>
@@ -262,13 +273,8 @@
      {if $is_recur}
       {if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
        <tr>
-        <td colspan="2" {$labelStyle}>
-         {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can cancel the auto-renewal option by <a href="%1">visiting this web page</a>.{/ts}
-        </td>
-       </tr>
-       <tr>
-        <td colspan="2" {$labelStyle}>
-         {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this automatically renewed membership by <a href="%1">visiting this web page</a>.{/ts}
+        <td {$labelStyle}>
+         {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
       {/if}
@@ -309,7 +315,7 @@
       {if $pcp_roll_nickname}
        <tr>
         <td {$labelStyle}>
-         {ts}Nickname{/ts}
+         {ts}Nick Name{/ts}
         </td>
         <td {$valueStyle}>
          {$pcp_roll_nickname}
@@ -489,7 +495,7 @@
        </th>
       </tr>
       {foreach from=$customPost item=customValue key=customName}
-       {if ($trackingFields and ! in_array($customName, $trackingFields)) or ! $trackingFields}
+       {if ($trackingFields and !in_array($customName, $trackingFields)) or !$trackingFields}
         <tr>
          <td {$labelStyle}>
           {$customName}

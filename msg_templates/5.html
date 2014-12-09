@@ -42,14 +42,14 @@
      </tr>
      <tr>
       <td {$labelStyle}>
-       {ts}Financial Type{/ts}
+       {ts}Contribution Type{/ts}
       </td>
       <td {$valueStyle}>
        {$formValues.contributionType_name}
       </td>
      </tr>
 
-     {if $lineItem and !$is_quick_config}
+     {if $lineItem}
       {foreach from=$lineItem item=value key=priceset}
        <tr>
         <td colspan="2" {$valueStyle}>
