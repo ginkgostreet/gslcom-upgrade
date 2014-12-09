@@ -48,8 +48,15 @@ echo "Putting site into maintenance mode..."
 drush vset -y maintenance_mode 1
 drush cc all # just in case
 
-echo "Disabling CiviCRM-related Drupal modules..."
+echo "Disabling *custom* CiviCRM-related Drupal modules..."
 set +e
+CUSTOM_CIVI_MODS="civicrm_display_membership_date_on_confirm"
+drush -y dis ${CUSTOM_CIVI_MODS}
+pushd "${WEBROOT}"/sites/all/modules > /dev/null
+rm -rf ${CUSTOM_CIVI_MODS}
+popd > /dev/null
+
+echo "Disabling CiviCRM-related Drupal modules..."
 CIVI_MODULES="`drush pml --status=enabled --pipe | grep civi`"
 CIVI_MODULES_STR="variable_membership chaPurchase user_dashboard"
 for MOD in ${CIVI_MODULES}; do
@@ -86,7 +93,7 @@ source "${ABS_CALLPATH}/upgrade-to-4.5.4.sh"
 
 echo "Refreshing CiviCRM extensions list..."
 for X in ${CIVI_EXT}; do
-  git clone git@bitbucket.org:chorusamerica/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
+  git clone ${GIT_REMOTE}/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
 done
 drush -y cvapi extension.refresh
 
@@ -94,6 +101,12 @@ echo "Enabling custom CiviCRM extensions..."
 for X in ${CIVI_EXT}; do
   drush cvapi extension.enable key=${X}
 done
+
+echo "Enabling *custom* CiviCRM-related Drupal modules..."
+for X in ${CUSTOM_CIVI_MODS}; do
+  git clone ${GIT_REMOTE}/${X}.git ${WEBROOT}/sites/all/modules/${X}
+done
+drush -y en ${CUSTOM_CIVI_MODS}
 
 echo "Enabling CiviCRM-related Drupal modules..."
 drush -y en ${CIVI_MODULES_STR}
