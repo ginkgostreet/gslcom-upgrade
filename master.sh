@@ -91,6 +91,10 @@ chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
 echo "Beginning upgrade to 4.5.4..."
 source "${ABS_CALLPATH}/upgrade-to-4.5.4.sh"
 
+echo "Upgrading custom message templates..."
+# redirect stderr to /dev/null because we're using a deprecated (and hence noisy) PHP function
+${ABS_CALLPATH}/msg_templates/generate_query.php ${CIVI_DB} 19 2> /dev/null | mysql
+
 echo "Refreshing CiviCRM extensions list..."
 for X in ${CIVI_EXT}; do
   git clone ${GIT_REMOTE}/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
