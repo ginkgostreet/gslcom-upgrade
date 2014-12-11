@@ -54,7 +54,7 @@ drush cc all # just in case
 
 echo "Disabling *custom* CiviCRM-related Drupal modules..."
 set +e
-CUSTOM_CIVI_MODS="civicrm_display_membership_date_on_confirm"
+CUSTOM_CIVI_MODS="civicrm_display_membership_date_on_confirm civicrm_disable_skip_participant civicrm_custom_contribution_confirmation"
 drush -y dis ${CUSTOM_CIVI_MODS}
 pushd "${WEBROOT}"/sites/all/modules > /dev/null
 rm -rf ${CUSTOM_CIVI_MODS}
