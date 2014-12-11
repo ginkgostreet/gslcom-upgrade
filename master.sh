@@ -99,9 +99,21 @@ echo "Upgrading custom message templates..."
 # redirect stderr to /dev/null because we're using a deprecated (and hence noisy) PHP function
 ${ABS_CALLPATH}/msg_templates/generate_query.php ${CIVI_DB} 19 2> /dev/null | mysql
 
+echo "Configuring new extensions directory..."
+if ${FLAG_DEV}; then
+  CIVI_SETTINGS_FILE="${WEBROOT}"/sites/default/civicrm_config.php
+else
+  CIVI_SETTINGS_FILE="${WEBROOT}"/sites/default/civicrm.settings.php
+fi
+mkdir "${WEBROOT}"/sites/default/ext
+sed -i "/extensionsDir/c\$civicrm_setting['Directory Preferences']['extensionsDir'] = dirname(__FILE__) . '/ext';" \
+  ${CIVI_SETTINGS_FILE}
+sed -i "/extensionsURL/c\$civicrm_setting['URL Preferences']['extensionsURL'] = CIVICRM_UF_BASEURL . '/sites/default/ext';" \
+  ${CIVI_SETTINGS_FILE}
+
 echo "Refreshing CiviCRM extensions list..."
 for X in ${CIVI_EXT}; do
-  git clone ${GIT_REMOTE}/${X}.git ${WEBROOT}/sites/default/files/civicrm/custom/extensions/${X}
+  git clone ${GIT_REMOTE}/${X}.git ${WEBROOT}/sites/default/ext/${X}
 done
 drush -y cvapi extension.refresh
 
