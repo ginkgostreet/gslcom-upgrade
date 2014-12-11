@@ -40,7 +40,7 @@ if ${FLAG_DEV}; then
 fi
 
 echo "Fixing missing finanicial transaction issues before starting the upgrade..."
-mysql ${CIVI_DB} < ${ABS_CALLPATH}/transaction_fix.sql
+mysql ${CIVI_DB} < ${ABS_CALLPATH}/sql/transaction_fix.sql
 
 
 #if ${FLAG_DEV}; then
