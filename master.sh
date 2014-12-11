@@ -39,6 +39,10 @@ if ${FLAG_DEV}; then
         "${WEBROOT}"/sites/default/civicrm.settings.php
 fi
 
+echo "Fixing missing finanicial transaction issues before starting the upgrade..."
+mysql ${CIVI_DB} < ${ABS_CALLPATH}/sql/transaction_fix.sql
+
+
 #if ${FLAG_DEV}; then
 #  echo "Enabling CiviCRM debugging..."
 #  drush civicrm-enable-debug
