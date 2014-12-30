@@ -92,8 +92,8 @@ done
 echo "Making CiviCRM settings file writable..."
 chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
 
-echo "Beginning upgrade to 4.5.4..."
-source "${ABS_CALLPATH}/upgrade-to-4.5.4.sh"
+echo "Beginning upgrade to 4.5.x..."
+source "${ABS_CALLPATH}/upgrade-to-4.5.x.sh"
 
 echo "Upgrading custom message templates..."
 # redirect stderr to /dev/null because we're using a deprecated (and hence noisy) PHP function
