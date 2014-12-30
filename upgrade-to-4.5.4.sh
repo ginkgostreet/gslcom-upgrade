@@ -1,5 +1,5 @@
 #!/bin/bash
-MY_VER=4.5.4
+MY_VER=4.5.5
 MY_TARGZ="civicrm-${MY_VER}-drupal6.tar.gz"
 
 if [[ ! ( -f "${ABS_CALLPATH}/tars/${MY_TARGZ}" ) ]]; then
