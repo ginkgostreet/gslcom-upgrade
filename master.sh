@@ -39,10 +39,6 @@ if ${FLAG_DEV}; then
         "${WEBROOT}"/sites/default/civicrm.settings.php
 fi
 
-echo "Fixing missing finanicial transaction issues before starting the upgrade..."
-mysql ${CIVI_DB} < ${ABS_CALLPATH}/sql/transaction_fix.sql
-
-
 #if ${FLAG_DEV}; then
 #  echo "Enabling CiviCRM debugging..."
 #  drush civicrm-enable-debug
@@ -91,6 +87,9 @@ done
 
 echo "Making CiviCRM settings file writable..."
 chmod a+w "${WEBROOT}"/sites/default/civicrm.settings.php
+
+echo "Fixing missing finanicial transaction issues before starting the upgrade..."
+mysql ${CIVI_DB} < ${ABS_CALLPATH}/sql/transaction_fix.sql
 
 echo "Beginning upgrade to 4.5.x..."
 source "${ABS_CALLPATH}/upgrade-to-4.5.x.sh"
