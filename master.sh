@@ -101,6 +101,9 @@ sudo chmod a-w "${WEBROOT}"/sites/default/civicrm.settings.php
 sudo chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civicrm
 sudo chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 
+echo "Upgrading Drupal to 7.3x..."
+source "${ABS_CALLPATH}/drupal-upgrade-to-7.x.sh" 
+
 drush cc all # just in case
 
 SUCCESS_MSG="Upgrade complete. Don't forget to take the site out of maintenance mode once you've verified everything looks right."
@@ -109,3 +112,4 @@ if ${FLAG_DEV}; then
 fi
 
 echo "${SUCCESS_MSG}"
+
