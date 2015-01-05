@@ -1,6 +1,6 @@
 #!/bin/bash
 MY_VER=4.5.5
-MY_TARGZ="civicrm-${MY_VER}-drupal6.tar.gz"
+MY_TARGZ="civicrm-${MY_VER}-drupal.tar.gz"
 
 if [[ ! ( -f "${ABS_CALLPATH}/tars/${MY_TARGZ}" ) ]]; then
   wget -P ${ABS_CALLPATH}/tars/ wget "http://downloads.sourceforge.net/project/civicrm/civicrm-stable/${MY_VER}/${MY_TARGZ}"
@@ -19,9 +19,6 @@ set -e
 echo "Replacing CiviCRM core files..."
 rm -rf "${WEBROOT}"/sites/all/modules/civicrm
 tar -C "${WEBROOT}"/sites/all/modules/ -xzf "${ABS_CALLPATH}/tars/${MY_TARGZ}"
-
-echo "Resolving database integrity issues..."
-mysql ${CIVI_DB} < "${ABS_CALLPATH}/sql/pre-flight-4.5.4.sql"
 
 echo "Running the database upgrade. Please be patient; this could take a while..."
 cd "${WEBROOT}"/sites/default
