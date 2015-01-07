@@ -16,7 +16,7 @@ if [[ ${CMS} == 'DRUPAL' ]]; then
   echo "Getting a list of avalible updates and updating the core..."
   pushd ${ROOT_DIR}/${WEB_ROOT_DIR}/sites
   drush ups
-  drush upc
+  drush -y upc
   popd
 fi
 
