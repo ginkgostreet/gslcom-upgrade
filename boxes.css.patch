@@ -1,0 +1,19 @@
+--- /home/galata/Desktop/boxes.css.bak
++++ /home/galata/Desktop/boxes.css
+@@ -18,6 +18,16 @@
+   box-shadow: none;
+ }
+ 
++.crm-container .crm-section .label {
++  width: auto;
++}
++
++#crm-container.crm-public input[type="text"], #crm-container.crm-public input[type="password"], #crm-container.crm-public select {
++  width: 100%;
++  height: 100%;
++  box-sizing: border-box;
++}
++
+ /*
+ #footer .block {
+     background: #267788;
