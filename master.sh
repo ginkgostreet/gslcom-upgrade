@@ -102,7 +102,14 @@ sudo chown -R "${WEB_USER}":"${WEB_GROUP}" "${WEBROOT}"/sites/default/files/civi
 sudo chmod -R o-w "${WEBROOT}"/sites/default/files/civicrm/
 
 echo "Upgrading Drupal to 7.3x..."
-source "${ABS_CALLPATH}/drupal-upgrade-to-7.x.sh" 
+source "${ABS_CALLPATH}/drupal-upgrade-to-7.x.sh"
+
+echo "Fixing sidebar styling issues..."
+pushd ${WEBROOT}/sites/all/themes/gsl/css/components/
+rm -f ${WEBROOT}/sites/all/themes/gsl/css/components/boxes.css.patch
+cp -rf ${UPGRADE_ROOT}/boxes.css.patch ${WEBROOT}/sites/all/themes/gsl/css/components/
+patch -p3 boxes.css boxes.css.patch
+rm -f ${WEBROOT}/sites/all/themes/gsl/css/components/boxes.css.patch
 
 drush cc all # just in case
 
@@ -112,4 +119,3 @@ if ${FLAG_DEV}; then
 fi
 
 echo "${SUCCESS_MSG}"
-
